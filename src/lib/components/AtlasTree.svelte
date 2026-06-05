@@ -55,23 +55,29 @@
 	// --- view (pan / zoom) ---
 	let view = $state({ tx: 0, ty: 0, s: 1 });
 	let viewport = $state<HTMLDivElement>();
-	let sceneEl = $state<SVGGElement>();
+
+	// Content bounds from node positions + radii (excludes decorative
+	// backgrounds, which would otherwise inflate the zoom-to-fit).
+	const contentBounds = (() => {
+		let minX = Infinity,
+			minY = Infinity,
+			maxX = -Infinity,
+			maxY = -Infinity;
+		for (const n of tree.nodes) {
+			const r = NODE_RADIUS[n.t];
+			if (n.x - r < minX) minX = n.x - r;
+			if (n.y - r < minY) minY = n.y - r;
+			if (n.x + r > maxX) maxX = n.x + r;
+			if (n.y + r > maxY) maxY = n.y + r;
+		}
+		return { minX, minY, w: maxX - minX, h: maxY - minY };
+	})();
 
 	const transform = $derived(`translate(${view.tx},${view.ty}) scale(${view.s})`);
 
 	function zoomFit() {
 		if (!viewport) return;
-		let minX = tree.bounds.minX,
-			minY = tree.bounds.minY,
-			w = tree.bounds.maxX - tree.bounds.minX,
-			h = tree.bounds.maxY - tree.bounds.minY;
-		const bb = sceneEl?.getBBox?.();
-		if (bb && bb.width && bb.height) {
-			minX = bb.x;
-			minY = bb.y;
-			w = bb.width;
-			h = bb.height;
-		}
+		const { minX, minY, w, h } = contentBounds;
 		const pad = 40;
 		const s = Math.min(
 			(viewport.clientWidth - pad * 2) / w,
@@ -189,7 +195,21 @@
 					<circle cx="0.5" cy="0.5" r="0.5" />
 				</clipPath>
 			</defs>
-			<g bind:this={sceneEl} {transform}>
+			<g {transform}>
+				<!-- subtree background art -->
+				<g class="backgrounds">
+					{#each tree.backgrounds as b (b.sub)}
+						<image
+							href={b.img}
+							x={b.cx - b.size / 2}
+							y={b.cy - b.size / 2}
+							width={b.size}
+							height={b.size}
+							preserveAspectRatio="xMidYMid meet"
+							opacity={b.sub === 'Generic' ? 0.25 : 0.6}
+						/>
+					{/each}
+				</g>
 				<!-- edges -->
 				<g class="edges">
 					{#each edges as e (e.key)}
@@ -230,7 +250,17 @@
 							}}
 						>
 							<circle class="bg" cx={n.x} cy={n.y} {r} />
-							{#if n.ic}
+							{#if n.ic && n.t === 'root'}
+								<!-- start-point art: unclipped + larger so the glow shows -->
+								<image
+									href={n.ic}
+									x={n.x - r * 1.4}
+									y={n.y - r * 1.4}
+									width={r * 2.8}
+									height={r * 2.8}
+									preserveAspectRatio="xMidYMid meet"
+								/>
+							{:else if n.ic}
 								<image
 									href={n.ic}
 									x={n.x - r + 2}

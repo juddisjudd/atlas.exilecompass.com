@@ -226,6 +226,13 @@ poe2db `data_us.json` (matches on every field the renderer uses).
   pobb.in-style `/<id>` short link, with `/<id>/raw` and `/api/stats`. `/[id]` is
   a read-only SSR view with an "Edit a copy" link and a stale-tree warning.
   Verified end-to-end against the live Coolify DB (create/fetch/raw/stats/400).
+- **2026-06-05** — Game art: wired the real atlas art from `static/assets`
+  (Atlas.json PascalCase refs -> lowercased `.webp`). The 6 root nodes now show
+  their start-point icons; each subtree (and the main tree) gets its themed
+  background art behind the cluster (sized to the cluster, positioned via the
+  start node + illustration offset). `bake.mjs` emits a `backgrounds[]` layer;
+  zoom-to-fit measures node bounds only so the large backdrops don't skew it.
+  (Per-node skill icons still come from the `/icons` set — not in this art batch.)
 - **2026-06-05** — Deploy prep + UI minimalism: added `Dockerfile` (oven/bun
   multi-stage, runs bake-via-bun + vite build, `bun build/index.js`, healthcheck)
   and `.dockerignore`; switched bake/build scripts `node`->`bun`. Trimmed the

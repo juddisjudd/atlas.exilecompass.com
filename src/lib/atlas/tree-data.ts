@@ -27,6 +27,14 @@ export interface TreeEdge {
 	lg?: number; // large-arc flag
 }
 
+export interface TreeBackground {
+	img: string;
+	cx: number;
+	cy: number;
+	size: number;
+	sub: string;
+}
+
 export interface TreeData {
 	version: string;
 	constants: { orbitRadii: number[]; skillsPerOrbit: number[] };
@@ -35,6 +43,7 @@ export interface TreeData {
 	bounds: { minX: number; minY: number; maxX: number; maxY: number };
 	totalPoints: number;
 	ascendancyPoints: number;
+	backgrounds: TreeBackground[];
 	nodes: TreeNode[];
 	edges: TreeEdge[];
 }

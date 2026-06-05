@@ -49,6 +49,14 @@ function iconPath(url) {
 	return '/icons/' + url.split('/').pop();
 }
 
+// Game art lives in static/assets as lowercased basenames + .webp, while
+// Atlas.json references it in PascalCase paths (e.g.
+// ".../StartingPointRitualActive" -> "/assets/startingpointritualactive.webp").
+function assetPath(ref) {
+	if (!ref) return '';
+	return '/assets/' + ref.split('/').pop().toLowerCase() + '.webp';
+}
+
 // ---- adjacency (real edges only) ----
 const adj = new Map();
 const linkAdj = (a, b) => {
@@ -87,6 +95,21 @@ for (const r of roots) {
 	}
 }
 
+// ---- start-point art + subtree background art (from Atlas.json) ----
+const rootImage = {}; // root hash -> start-point icon
+const rootBg = {}; // root hash -> { img, ix, iy }
+for (const r of roots) {
+	const sub = passives[r]?.atlas_subtree;
+	rootImage[r] = sub?.image
+		? assetPath(sub.image)
+		: '/assets/startingpointgeneralactive.webp';
+	rootBg[r] = {
+		img: sub?.background ? assetPath(sub.background) : '/assets/atlasmaintreebg.webp',
+		ix: sub?.illustration?.x ?? 0,
+		iy: sub?.illustration?.y ?? 0
+	};
+}
+
 // ---- nodes (drop mastery: decorative, no connections, never rendered) ----
 const pos = {};
 const nodes = [];
@@ -105,8 +128,38 @@ for (const [h, n] of Object.entries(nodesIn)) {
 		s: subtreeOf[h] || 'Generic',
 		n: n.name || n.id || String(h),
 		id: n.id || '',
-		ic: iconPath(n.icon),
+		ic: t === 'root' ? rootImage[h] || '' : iconPath(n.icon),
 		st: n.stats || []
+	});
+}
+
+// ---- subtree background images, sized to each cluster ----
+const backgrounds = [];
+for (const r of roots) {
+	const name = subtreeByRoot[r];
+	const members = nodes.filter((n) => n.s === name);
+	if (!members.length) continue;
+	const xs = members.map((n) => n.x);
+	const ys = members.map((n) => n.y);
+	const minX = Math.min(...xs),
+		maxX = Math.max(...xs),
+		minY = Math.min(...ys),
+		maxY = Math.max(...ys);
+	const w = maxX - minX,
+		h = maxY - minY;
+	const rp = pos[r] || { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
+	const generic = name === 'Generic';
+	// subtrees: centre on the start node + its illustration offset (matches the
+	// game); generic main tree: centre on the cluster.
+	const cx = generic ? (minX + maxX) / 2 : rp.x + rootBg[r].ix;
+	const cy = generic ? (minY + maxY) / 2 : rp.y + rootBg[r].iy;
+	const size = Math.round(Math.max(w, h) * (generic ? 1.2 : 1.9));
+	backgrounds.push({
+		img: rootBg[r].img,
+		cx: +cx.toFixed(1),
+		cy: +cy.toFixed(1),
+		size,
+		sub: name
 	});
 }
 
@@ -155,6 +208,7 @@ const out = {
 	},
 	totalPoints: dataUs.points?.totalPoints ?? 0,
 	ascendancyPoints: dataUs.points?.ascendancyPoints ?? 0,
+	backgrounds,
 	nodes,
 	edges
 };
