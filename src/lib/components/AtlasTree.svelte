@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { tree, nodeByHash, NODE_RADIUS } from '$lib/atlas/tree-data';
-	import { Allocation } from '$lib/atlas/allocation.svelte';
+	import { Planner } from '$lib/atlas/planner.svelte';
 
-	let { alloc = new Allocation() }: { alloc?: Allocation } = $props();
+	let { planner = new Planner() }: { planner?: Planner } = $props();
+
+	const takenOrRoot = (h: number) => tree.roots.includes(h) || planner.isTaken(h);
+	const plannedOrRoot = (h: number) => tree.roots.includes(h) || planner.isPlanned(h);
 
 	// --- precomputed edge paths (node positions are static) ---
 	const edges = tree.edges.map((e) => {
@@ -94,7 +97,7 @@
 	let hovered = $state<number | null>(null);
 	let tip = $state<{ h: number; x: number; y: number } | null>(null);
 
-	const previewChain = $derived(hovered == null ? null : alloc.pathTo(hovered));
+	const previewChain = $derived(hovered == null ? null : planner.pathTo(hovered));
 	const previewNodes = $derived(new Set(previewChain ? previewChain.slice(1) : []));
 	const previewEdges = $derived.by(() => {
 		const s = new Set<string>();
@@ -128,11 +131,11 @@
 	<header>
 		<h1>Path of Exile 2 — Atlas Tree</h1>
 		<span class="stat"
-			>{tree.nodes.length} nodes · {edges.length} edges · <b>{alloc.count}</b> allocated</span
+			>{tree.nodes.length} nodes · {edges.length} edges · <b>{planner.count}</b> allocated</span
 		>
 		<span class="spacer"></span>
 		<label class="toggle"><input type="checkbox" bind:checked={showLabels} /> Labels</label>
-		<button onclick={() => alloc.clear()}>Clear path</button>
+		<button onclick={() => planner.clear()}>Clear path</button>
 		<button onclick={zoomFit}>Zoom to fit</button>
 		<button onclick={zoomReset}>Reset view</button>
 	</header>
@@ -159,7 +162,10 @@
 					{#each edges as e (e.key)}
 						<path
 							class="edge"
-							class:allocated={alloc.inTree(e.a) && alloc.inTree(e.b)}
+							class:allocated={takenOrRoot(e.a) && takenOrRoot(e.b)}
+							class:future={plannedOrRoot(e.a) &&
+								plannedOrRoot(e.b) &&
+								!(takenOrRoot(e.a) && takenOrRoot(e.b))}
 							class:preview={previewEdges.has(e.key)}
 							d={e.d}
 						/>
@@ -172,8 +178,9 @@
 						<!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events -->
 						<g
 							class="node {n.t} subtree-{n.s}"
-							class:allocated={alloc.isAllocated(n.h)}
-							class:allocatable={alloc.isReachable(n.h)}
+							class:allocated={planner.isTaken(n.h)}
+							class:future={planner.isFuture(n.h)}
+							class:allocatable={planner.isReachable(n.h)}
 							class:preview={previewNodes.has(n.h)}
 							data-h={n.h}
 							role="button"
@@ -183,10 +190,10 @@
 							onpointerleave={onNodeLeave}
 							onclick={(e) => {
 								e.stopPropagation();
-								alloc.toggle(n.h);
+								planner.toggle(n.h);
 							}}
 							onkeydown={(e) => {
-								if (e.key === 'Enter' || e.key === ' ') alloc.toggle(n.h);
+								if (e.key === 'Enter' || e.key === ' ') planner.toggle(n.h);
 							}}
 						>
 							<circle class="bg" cx={n.x} cy={n.y} {r} />
@@ -248,10 +255,10 @@
 
 <style>
 	.planner {
-		position: fixed;
-		inset: 0;
 		display: grid;
 		grid-template-rows: auto 1fr;
+		min-height: 0;
+		height: 100%;
 		background: #000;
 		color: #d8dae0;
 		font:
@@ -326,6 +333,10 @@
 		stroke: #4ade80;
 		stroke-width: 3;
 	}
+	.edge.future {
+		stroke: #2f6f47;
+		stroke-width: 2;
+	}
 	.edge.preview {
 		stroke: #4ade80;
 		stroke-width: 3;
@@ -395,6 +406,15 @@
 	.node.allocated circle.bg {
 		stroke: #ffe089;
 		stroke-width: 7;
+		stroke-dasharray: none;
+	}
+	/* planned but not yet reached at the current timeline position */
+	.node.future {
+		opacity: 0.45;
+	}
+	.node.future circle.bg {
+		stroke: #8a7a3a;
+		stroke-width: 4;
 		stroke-dasharray: none;
 	}
 	.node.preview circle.bg {

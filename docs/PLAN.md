@@ -12,7 +12,7 @@ A full Path of Exile 2 **Atlas Skill Tree planner** with a shareable progression
 
 | | |
 |---|---|
-| **Current phase** | Phase 0 ✅ done (parity) → Phase 1 next |
+| **Current phase** | Phase 0 ✅ · Phase 1 ✅ (timeline) → Phase 2 next (sharing) |
 | **Last updated** | 2026-06-05 |
 | **Dev** | `bun run dev` (vite). Pipeline: `bun run data` (convert + bake). |
 | **Prototype** | `S:\_projects_\_poe2_\poe2-atlas\index.html` (reference, single-file) |
@@ -148,17 +148,18 @@ so growth is monitorable from a URL.
 - [x] Toolbar: zoom-to-fit / reset / clear, allocated counter, labels toggle
 - [x] Filter mastery nodes; green connections; no start-node border (match prototype)
 - [x] Verify parity with `index.html` in-browser; no console errors; `bun run check` clean
-- [x] `git init` + initial commit (local)
-- [ ] Create GitHub remote + push (needs go-ahead — outward-facing)
+- [x] `git init` + initial commit; pushed to GitHub (`juddisjudd/atlas.exilecompass.com`)
 
-### Phase 1 — Timeline core
-- [ ] `timeline.svelte.ts`: `steps` auto-built from allocation order
-- [ ] Appending a path adds its nodes to `steps`; removing prunes from `steps`
-- [ ] `TimelinePanel.svelte`: horizontal scrubber over `steps`
-- [ ] Scrub to `k` -> tree shows `steps[0..k]` allocated, rest dimmed
-- [ ] Add / rename / delete milestone markers at the current step
-- [ ] Drag to reorder steps (within connectivity constraints)
-- [ ] Step counter + "points so far" display tied to scrubber
+### Phase 1 — Timeline core — ✅ done (reorder deferred)
+- [x] `planner.svelte.ts`: ordered `steps` are the source of truth (merges
+      allocation + timeline; `cursor` = view position, `milestones[]`)
+- [x] Appending a path adds its nodes to `steps`; removing prunes from `steps`
+- [x] `TimelinePanel.svelte`: horizontal scrubber over `steps` (drag/click)
+- [x] Scrub to `k` -> `steps[0..k]` shown taken, later steps shown "future" (dimmed)
+- [x] Add / rename / delete / jump-to milestone markers at the current step
+- [x] Step counter + "points so far" display tied to scrubber
+- [ ] Drag to reorder steps (deferred — needs connectivity-preserving reorder;
+      revisit in Phase 3 QoL)
 
 ### Phase 2 — Sharing
 **Stateless tier:**
@@ -212,4 +213,9 @@ poe2db `data_us.json` (matches on every field the renderer uses).
   (`bun run data`); ported the renderer/pathfinding/allocation into
   `AtlasTree.svelte` + `src/lib/atlas/*`. Full parity with the prototype (509
   nodes, arc edges, allocation, hover path-preview, tooltips), `bun run check`
-  clean, no console errors. Local git commit made; GitHub push pending go-ahead.
+  clean, no console errors. Pushed to GitHub (`juddisjudd/atlas.exilecompass.com`).
+- **2026-06-05** — **Phase 1 complete.** `planner.svelte.ts` makes the ordered
+  `steps` list the source of truth (replaces the old `Allocation` set); `cursor`
+  scrubs progression, with taken vs "future" (dimmed) node/edge styling.
+  `TimelinePanel.svelte` adds the scrubber + milestone markers (add/rename/
+  delete/jump) and a step/points readout. Drag-to-reorder steps deferred.
