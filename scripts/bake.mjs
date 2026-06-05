@@ -159,7 +159,7 @@ for (const r of roots) {
 	const cy = generic
 		? (minY + maxY) / 2 - GENERIC_BG_Y_OFFSET
 		: rp.y + rootBg[r].iy + SUBTREE_BG_Y_OFFSET;
-	const size = Math.round(Math.max(w, h) * (generic ? 1.32 : 1.9));
+	const size = Math.round(Math.max(w, h) * (generic ? 1.307 : 1.9));
 	backgrounds.push({
 		img: rootBg[r].img,
 		cx: +cx.toFixed(1),
