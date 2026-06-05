@@ -151,7 +151,7 @@ for (const r of roots) {
 	const generic = name === 'Generic';
 	// subtrees: centre on the start node + its illustration offset (matches the
 	// game); generic main tree: centre on the cluster, nudged up a little.
-	const GENERIC_BG_Y_OFFSET = 400; // smaller y = up
+	const GENERIC_BG_Y_OFFSET = 300; // smaller y = up
 	// Fine-tune so the medallion ring sits on the start node (larger y = down,
 	// which raises the compass within the medallion).
 	const SUBTREE_BG_Y_OFFSET = 90;
@@ -184,6 +184,7 @@ for (const [h, n] of Object.entries(nodesIn)) {
 		seenEdge.add(key);
 		const edge = { a: +h, b: +tHash };
 		if (a.group === b.group && a.orbit === b.orbit && a.orbit !== 0) {
+			// Same group + orbit: arc along that orbit, centred on the group.
 			const g = groups[String(a.group)];
 			const sp = skillsPerOrbit[a.orbit];
 			const delta = ((b.orbitIndex - a.orbitIndex) % sp + sp) % sp;
@@ -191,6 +192,13 @@ for (const [h, n] of Object.entries(nodesIn)) {
 			edge.cx = +g.x.toFixed(2);
 			edge.cy = +g.y.toFixed(2);
 			edge.sw = delta <= sp / 2 ? 1 : 0;
+			edge.lg = 0;
+		} else if (c.orbit !== 0 && Math.abs(c.orbit) < orbitRadii.length) {
+			// Spline-curved connection (cross-group / cross-orbit): the stored
+			// orbit index gives the arc radius; the sign gives the sweep
+			// direction. (A huge sentinel like INT_MAX means "straight".)
+			edge.r = orbitRadii[Math.abs(c.orbit)];
+			edge.sw = c.orbit < 0 ? 1 : 0;
 			edge.lg = 0;
 		}
 		edges.push(edge);
