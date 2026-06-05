@@ -153,7 +153,7 @@ for (const r of roots) {
 	// game); generic main tree: centre on the cluster.
 	const cx = generic ? (minX + maxX) / 2 : rp.x + rootBg[r].ix;
 	const cy = generic ? (minY + maxY) / 2 : rp.y + rootBg[r].iy;
-	const size = Math.round(Math.max(w, h) * (generic ? 1.2 : 1.9));
+	const size = Math.round(Math.max(w, h) * (generic ? 1.32 : 1.9));
 	backgrounds.push({
 		img: rootBg[r].img,
 		cx: +cx.toFixed(1),

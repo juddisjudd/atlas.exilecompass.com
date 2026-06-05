@@ -206,7 +206,7 @@
 							width={b.size}
 							height={b.size}
 							preserveAspectRatio="xMidYMid meet"
-							opacity={b.sub === 'Generic' ? 0.25 : 0.6}
+							opacity={b.sub === 'Generic' ? 1 : 0.6}
 						/>
 					{/each}
 				</g>
