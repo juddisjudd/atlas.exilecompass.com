@@ -152,8 +152,13 @@ for (const r of roots) {
 	// subtrees: centre on the start node + its illustration offset (matches the
 	// game); generic main tree: centre on the cluster, nudged up a little.
 	const GENERIC_BG_Y_OFFSET = 550; // smaller y = up
+	// Fine-tune so the medallion ring sits on the start node (larger y = down,
+	// which raises the compass within the medallion).
+	const SUBTREE_BG_Y_OFFSET = 90;
 	const cx = generic ? (minX + maxX) / 2 : rp.x + rootBg[r].ix;
-	const cy = generic ? (minY + maxY) / 2 - GENERIC_BG_Y_OFFSET : rp.y + rootBg[r].iy;
+	const cy = generic
+		? (minY + maxY) / 2 - GENERIC_BG_Y_OFFSET
+		: rp.y + rootBg[r].iy + SUBTREE_BG_Y_OFFSET;
 	const size = Math.round(Math.max(w, h) * (generic ? 1.32 : 1.9));
 	backgrounds.push({
 		img: rootBg[r].img,
