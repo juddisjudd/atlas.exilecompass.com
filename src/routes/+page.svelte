@@ -24,9 +24,7 @@
 
 <div class="app">
 	<div class="tree-area"><AtlasTree {planner} /></div>
-	{#if planner.count > 0}
-		<TimelinePanel {planner} />
-	{/if}
+	<TimelinePanel {planner} />
 </div>
 
 <style>

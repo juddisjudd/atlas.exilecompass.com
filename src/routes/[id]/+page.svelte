@@ -28,9 +28,7 @@
 		<a class="edit" href="/#{data.code}">Edit a copy →</a>
 	</div>
 	<div class="tree-area"><AtlasTree {planner} readonly /></div>
-	{#if planner.count > 0}
-		<TimelinePanel {planner} readonly />
-	{/if}
+	<TimelinePanel {planner} readonly />
 </div>
 
 <style>

@@ -5,10 +5,10 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "node scripts/bake.mjs && vite build",
+		"build": "bun scripts/bake.mjs && vite build",
 		"preview": "vite preview",
 		"convert": "python scripts/convert_atlas.py data/Atlas.json data/data_us.json",
-		"bake": "node scripts/bake.mjs",
+		"bake": "bun scripts/bake.mjs",
 		"data": "bun run convert && bun run bake",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

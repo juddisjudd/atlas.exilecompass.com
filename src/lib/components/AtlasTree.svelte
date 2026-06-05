@@ -83,10 +83,6 @@
 			ty: viewport.clientHeight / 2 - (minY + h / 2) * s
 		};
 	}
-	function zoomReset() {
-		view = { tx: 0, ty: 0, s: 1 };
-	}
-
 	$effect(() => {
 		// fit once the scene is laid out
 		zoomFit();
@@ -156,30 +152,25 @@
 		tip = null;
 	}
 
-	let showLabels = $state(false);
 	const tipNode = $derived(tip ? nodeByHash.get(tip.h) : null);
 	const tipRect = $derived(tip && viewport ? viewport.getBoundingClientRect() : null);
 </script>
 
 <div class="planner">
 	<header>
-		<h1>Path of Exile 2 — Atlas Tree</h1>
-		<span class="stat"
-			>{tree.nodes.length} nodes · {edges.length} edges · <b>{planner.count}</b> allocated</span
-		>
+		<h1>Atlas Tree</h1>
+		<span class="stat"><b>{planner.count}</b> points</span>
 		<span class="spacer"></span>
 		{#if shareUrl}
 			<input class="sharelink" readonly value={shareUrl} onfocus={(e) => e.currentTarget.select()} />
 		{/if}
-		<label class="toggle"><input type="checkbox" bind:checked={showLabels} /> Labels</label>
 		{#if !readonly}
 			<button class="primary" disabled={sharing || planner.count === 0} onclick={share}>
 				{sharing ? 'Sharing…' : 'Share'}
 			</button>
-			<button onclick={() => planner.clear()}>Clear path</button>
+			<button onclick={() => planner.clear()}>Clear</button>
 		{/if}
 		<button onclick={zoomFit}>Zoom to fit</button>
-		<button onclick={zoomReset}>Reset view</button>
 	</header>
 
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -214,7 +205,7 @@
 					{/each}
 				</g>
 				<!-- nodes -->
-				<g class="nodes" class:show-labels={showLabels}>
+				<g class="nodes">
 					{#each tree.nodes as n (n.h)}
 						{@const r = NODE_RADIUS[n.t]}
 						<!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events -->
@@ -249,9 +240,6 @@
 									preserveAspectRatio="xMidYMid meet"
 									clip-path="url(#nodeClip)"
 								/>
-							{/if}
-							{#if showLabels}
-								<text class="label" x={n.x} y={n.y + r + 14}>{n.n}</text>
 							{/if}
 						</g>
 					{/each}
@@ -331,8 +319,7 @@
 	header .spacer {
 		flex: 1;
 	}
-	header button,
-	header .toggle {
+	header button {
 		background: #161616;
 		border: 1px solid #2a2a2a;
 		color: #d8dae0;
@@ -341,8 +328,7 @@
 		font-size: 12px;
 		cursor: pointer;
 	}
-	header button:hover,
-	header .toggle:hover {
+	header button:hover {
 		border-color: #c9aa45;
 		color: #c9aa45;
 	}
@@ -418,16 +404,6 @@
 	}
 	.node image {
 		pointer-events: none;
-	}
-	.node .label {
-		fill: #d8dae0;
-		font-size: 11px;
-		text-anchor: middle;
-		pointer-events: none;
-		paint-order: stroke;
-		stroke: rgba(0, 0, 0, 0.9);
-		stroke-width: 3;
-		stroke-linejoin: round;
 	}
 
 	.node.normal circle.bg {

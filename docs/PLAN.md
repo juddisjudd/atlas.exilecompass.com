@@ -187,7 +187,8 @@ so growth is monitorable from a URL.
 ### Phase 4 — Embeds, deploy & advanced
 - [ ] Discord OG-embed preview images per shared plan (SSR `/<id>`)
 - [ ] Per-subtree point pools (Breach/Delirium/etc. earned separately)
-- [ ] Dockerfile + Coolify deploy config for the `atlas.` subdomain
+- [x] Dockerfile (oven/bun multi-stage, adapter-node, healthcheck) + `.dockerignore`
+- [ ] Coolify deploy config for the `atlas.` subdomain (user-side: env, domain)
 - [ ] Periodic cleanup / TTL policy for unused plans (if needed)
 
 ---
@@ -225,3 +226,8 @@ poe2db `data_us.json` (matches on every field the renderer uses).
   pobb.in-style `/<id>` short link, with `/<id>/raw` and `/api/stats`. `/[id]` is
   a read-only SSR view with an "Edit a copy" link and a stale-tree warning.
   Verified end-to-end against the live Coolify DB (create/fetch/raw/stats/400).
+- **2026-06-05** — Deploy prep + UI minimalism: added `Dockerfile` (oven/bun
+  multi-stage, runs bake-via-bun + vite build, `bun build/index.js`, healthcheck)
+  and `.dockerignore`; switched bake/build scripts `node`->`bun`. Trimmed the
+  toolbar (removed Reset view + Labels), simplified the header to "N points",
+  and made the timeline panel always visible. `bun run build` verified.
