@@ -2,7 +2,7 @@
 // source of truth for allocation: editing always operates on the full plan,
 // while `cursor` is a view position used to scrub through the progression
 // (steps before the cursor are "taken", steps after it are "future").
-import { rootSet, adjacency } from './tree-data';
+import { rootSet, adjacency, nodeByHash } from './tree-data';
 import { pathTo as bfsPath, reachableAllocated } from './pathfinding';
 
 export interface Milestone {
@@ -14,6 +14,7 @@ export class Planner {
 	steps = $state<number[]>([]); // node hashes, in allocation order
 	cursor = $state(0); // how many steps are "taken" in the current view
 	milestones = $state<Milestone[]>([]);
+	title = $state('');
 
 	// hash -> position in steps
 	stepIndex = $derived.by(() => {
@@ -84,6 +85,18 @@ export class Planner {
 		this.steps = [];
 		this.cursor = 0;
 		this.milestones = [];
+		this.title = '';
+	}
+
+	/** Load a decoded plan, dropping any hashes not present in the current tree. */
+	load(plan: { steps: number[]; milestones: Milestone[]; title?: string }): void {
+		this.steps = plan.steps.filter((h) => nodeByHash.has(h));
+		const n = this.steps.length;
+		this.milestones = plan.milestones
+			.map((m) => ({ ...m, at: Math.max(0, Math.min(m.at, n)) }))
+			.sort((a, b) => a.at - b.at);
+		this.title = plan.title ?? '';
+		this.cursor = n;
 	}
 
 	setCursor(k: number): void {

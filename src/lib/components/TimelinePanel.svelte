@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Planner } from '$lib/atlas/planner.svelte';
 
-	let { planner }: { planner: Planner } = $props();
+	let { planner, readonly = false }: { planner: Planner; readonly?: boolean } = $props();
 
 	let trackEl = $state<HTMLDivElement>();
 	let dragging = $state(false);
@@ -48,7 +48,9 @@
 		<div class="spacer"></div>
 		<button onclick={prevMilestone} title="Previous milestone">◀</button>
 		<button onclick={nextMilestone} title="Next milestone">▶</button>
-		<button class="primary" onclick={() => planner.addMilestone()}>+ Milestone</button>
+		{#if !readonly}
+			<button class="primary" onclick={() => planner.addMilestone()}>+ Milestone</button>
+		{/if}
 	</div>
 
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -73,14 +75,18 @@
 					<button class="jump" title="Jump to step {m.at}" onclick={() => planner.setCursor(m.at)}
 						>@{m.at}</button
 					>
-					<input
-						class="label"
-						name="milestone-{i}"
-						aria-label="Milestone label"
-						value={m.label}
-						oninput={(e) => planner.updateMilestone(i, { label: e.currentTarget.value })}
-					/>
-					<button class="del" title="Delete" onclick={() => planner.removeMilestone(i)}>×</button>
+					{#if readonly}
+						<span class="label ro">{m.label}</span>
+					{:else}
+						<input
+							class="label"
+							name="milestone-{i}"
+							aria-label="Milestone label"
+							value={m.label}
+							oninput={(e) => planner.updateMilestone(i, { label: e.currentTarget.value })}
+						/>
+						<button class="del" title="Delete" onclick={() => planner.removeMilestone(i)}>×</button>
+					{/if}
 				</div>
 			{/each}
 		</div>
@@ -206,6 +212,11 @@
 	.chip .label:focus {
 		outline: none;
 		border-color: #c9aa45;
+	}
+	.chip .label.ro {
+		border-color: transparent;
+		background: none;
+		width: auto;
 	}
 	.chip .del {
 		background: none;

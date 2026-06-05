@@ -12,7 +12,7 @@ A full Path of Exile 2 **Atlas Skill Tree planner** with a shareable progression
 
 | | |
 |---|---|
-| **Current phase** | Phase 0 ✅ · Phase 1 ✅ (timeline) → Phase 2 next (sharing) |
+| **Current phase** | Phase 0 ✅ · 1 ✅ · 2 ✅ (sharing live) → Phase 3 next (QoL) |
 | **Last updated** | 2026-06-05 |
 | **Dev** | `bun run dev` (vite). Pipeline: `bun run data` (convert + bake). |
 | **Prototype** | `S:\_projects_\_poe2_\poe2-atlas\index.html` (reference, single-file) |
@@ -161,21 +161,21 @@ so growth is monitorable from a URL.
 - [ ] Drag to reorder steps (deferred — needs connectivity-preserving reorder;
       revisit in Phase 3 QoL)
 
-### Phase 2 — Sharing
+### Phase 2 — Sharing — ✅ done
 **Stateless tier:**
-- [ ] `share.ts`: encode `Plan` -> URL-safe base64 (16-bit hashes, compact)
-- [ ] Decode + validate; warn if `treeVersion` mismatches current data
-- [ ] Write/read plan from URL hash; "Copy link" action
-- [ ] Read-only shared-view mode (scrubber only, no editing)
-- [ ] Versioned format so old links keep working across tree updates
+- [x] `share.ts`: encode `Plan` -> URL-safe base64 (compact binary, 16-bit hashes)
+- [x] Decode + validate; `isCurrentTree()` warns on `treeVersion` mismatch
+- [x] Load plan from URL hash on the main page; `Share` action sets `#code`
+- [x] Read-only shared-view mode (`/[id]` page; tree + scrubber, no editing)
+- [x] Versioned format (`SHARE_VERSION`) so old links survive tree updates
 
 **Short-link tier (Postgres on Coolify):**
-- [ ] Provision Postgres in Coolify; wire `DATABASE_URL`
-- [ ] `db.ts`: client + `createPlan` / `getPlan` / `bumpViews`; `plans` table migration
-- [ ] `POST /api/share` -> store code, return 12-char nanoid
-- [ ] `/<id>` route: load plan (SSR), render read-only view
-- [ ] `/<id>/raw`: return raw base64 as `text/plain`
-- [ ] `/api/stats`: row count + table size for monitoring
+- [x] Postgres provisioned in Coolify; `DATABASE_URL` wired via `$env/dynamic/private`
+- [x] `db.ts`: client + `createPlan` / `getPlan` (bumps views) / `stats`; lazy `plans` table
+- [x] `POST /api/share` -> validates code, stores, returns 12-char nanoid id
+- [x] `/<id>` route: `+page.server.ts` loads plan, renders read-only view + "Edit a copy"
+- [x] `/<id>/raw`: returns raw base64 as `text/plain`
+- [x] `/api/stats`: `{count, bytes, kib}` for monitoring
 
 ### Phase 3 — Quality of life
 - [ ] Point-cost in node tooltip / on hover preview (`+N`)
@@ -219,3 +219,9 @@ poe2db `data_us.json` (matches on every field the renderer uses).
   scrubs progression, with taken vs "future" (dimmed) node/edge styling.
   `TimelinePanel.svelte` adds the scrubber + milestone markers (add/rename/
   delete/jump) and a step/points readout. Drag-to-reorder steps deferred.
+- **2026-06-05** — **Phase 2 complete.** `share.ts` encodes plans to compact
+  URL-safe base64 (versioned, treeVersion-stamped). Stateless `#code` links load
+  on the main page; `Share` also persists to **Postgres** (`db.ts`) and returns a
+  pobb.in-style `/<id>` short link, with `/<id>/raw` and `/api/stats`. `/[id]` is
+  a read-only SSR view with an "Edit a copy" link and a stale-tree warning.
+  Verified end-to-end against the live Coolify DB (create/fetch/raw/stats/400).

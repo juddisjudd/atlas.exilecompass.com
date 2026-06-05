@@ -1,9 +1,20 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import AtlasTree from '$lib/components/AtlasTree.svelte';
 	import TimelinePanel from '$lib/components/TimelinePanel.svelte';
 	import { Planner } from '$lib/atlas/planner.svelte';
+	import { decodePlan } from '$lib/atlas/share';
 
 	const planner = new Planner();
+
+	onMount(() => {
+		// Load a plan shared via the stateless URL hash (#<code>).
+		const code = location.hash.replace(/^#/, '');
+		if (code) {
+			const plan = decodePlan(code);
+			if (plan) planner.load(plan);
+		}
+	});
 </script>
 
 <svelte:head>

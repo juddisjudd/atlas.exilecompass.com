@@ -1,8 +1,42 @@
 <script lang="ts">
 	import { tree, nodeByHash, NODE_RADIUS } from '$lib/atlas/tree-data';
 	import { Planner } from '$lib/atlas/planner.svelte';
+	import { encodePlan } from '$lib/atlas/share';
 
-	let { planner = new Planner() }: { planner?: Planner } = $props();
+	let { planner = new Planner(), readonly = false }: { planner?: Planner; readonly?: boolean } =
+		$props();
+
+	// --- sharing ---
+	let shareUrl = $state<string | null>(null);
+	let sharing = $state(false);
+	async function share() {
+		sharing = true;
+		shareUrl = null;
+		const code = encodePlan({
+			steps: planner.steps,
+			milestones: planner.milestones,
+			title: planner.title
+		});
+		location.hash = code;
+		try {
+			const res = await fetch('/api/share', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ code })
+			});
+			shareUrl = res.ok
+				? `${location.origin}/${(await res.json()).id}`
+				: `${location.origin}/#${code}`;
+		} catch {
+			shareUrl = `${location.origin}/#${code}`;
+		}
+		try {
+			await navigator.clipboard.writeText(shareUrl);
+		} catch {
+			/* clipboard may be unavailable */
+		}
+		sharing = false;
+	}
 
 	const takenOrRoot = (h: number) => tree.roots.includes(h) || planner.isTaken(h);
 	const plannedOrRoot = (h: number) => tree.roots.includes(h) || planner.isPlanned(h);
@@ -97,7 +131,7 @@
 	let hovered = $state<number | null>(null);
 	let tip = $state<{ h: number; x: number; y: number } | null>(null);
 
-	const previewChain = $derived(hovered == null ? null : planner.pathTo(hovered));
+	const previewChain = $derived(hovered == null || readonly ? null : planner.pathTo(hovered));
 	const previewNodes = $derived(new Set(previewChain ? previewChain.slice(1) : []));
 	const previewEdges = $derived.by(() => {
 		const s = new Set<string>();
@@ -134,8 +168,16 @@
 			>{tree.nodes.length} nodes · {edges.length} edges · <b>{planner.count}</b> allocated</span
 		>
 		<span class="spacer"></span>
+		{#if shareUrl}
+			<input class="sharelink" readonly value={shareUrl} onfocus={(e) => e.currentTarget.select()} />
+		{/if}
 		<label class="toggle"><input type="checkbox" bind:checked={showLabels} /> Labels</label>
-		<button onclick={() => planner.clear()}>Clear path</button>
+		{#if !readonly}
+			<button class="primary" disabled={sharing || planner.count === 0} onclick={share}>
+				{sharing ? 'Sharing…' : 'Share'}
+			</button>
+			<button onclick={() => planner.clear()}>Clear path</button>
+		{/if}
 		<button onclick={zoomFit}>Zoom to fit</button>
 		<button onclick={zoomReset}>Reset view</button>
 	</header>
@@ -190,10 +232,10 @@
 							onpointerleave={onNodeLeave}
 							onclick={(e) => {
 								e.stopPropagation();
-								planner.toggle(n.h);
+								if (!readonly) planner.toggle(n.h);
 							}}
 							onkeydown={(e) => {
-								if (e.key === 'Enter' || e.key === ' ') planner.toggle(n.h);
+								if (!readonly && (e.key === 'Enter' || e.key === ' ')) planner.toggle(n.h);
 							}}
 						>
 							<circle class="bg" cx={n.x} cy={n.y} {r} />
@@ -303,6 +345,29 @@
 	header .toggle:hover {
 		border-color: #c9aa45;
 		color: #c9aa45;
+	}
+	header button.primary {
+		border-color: #3a5a3a;
+		color: #9be8a8;
+	}
+	header button.primary:hover {
+		border-color: #4ade80;
+		color: #4ade80;
+	}
+	header button:disabled {
+		opacity: 0.5;
+		cursor: default;
+	}
+	header .sharelink {
+		background: #0d0d0d;
+		border: 1px solid #2a2a2a;
+		color: #9be8a8;
+		border-radius: 4px;
+		padding: 4px 8px;
+		font:
+			11px ui-monospace,
+			monospace;
+		width: 230px;
 	}
 
 	.viewport {
