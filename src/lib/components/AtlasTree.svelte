@@ -1,7 +1,27 @@
 <script lang="ts">
-	import { tree, nodeByHash, NODE_RADIUS } from '$lib/atlas/tree-data';
+	import {
+		tree,
+		nodeByHash,
+		NODE_RADIUS,
+		NODE_FRAME,
+		FRAME_SCALE,
+		frameUrl,
+		type FrameState
+	} from '$lib/atlas/tree-data';
 	import { Planner } from '$lib/atlas/planner.svelte';
 	import { encodePlan } from '$lib/atlas/share';
+
+	// Display radius of a node's footprint (frame for normal/notable/keystone,
+	// the larger start art for roots).
+	function nodeRadius(t: string): number {
+		if (t === 'root') return NODE_RADIUS.root;
+		return (NODE_FRAME[t as 'normal' | 'notable' | 'keystone'].frameD * FRAME_SCALE) / 2;
+	}
+	function frameState(h: number): FrameState {
+		if (planner.isTaken(h)) return 'active';
+		if (planner.isReachable(h)) return 'canallocate';
+		return 'normal';
+	}
 
 	let { planner = new Planner(), readonly = false }: { planner?: Planner; readonly?: boolean } =
 		$props();
@@ -64,7 +84,7 @@
 			maxX = -Infinity,
 			maxY = -Infinity;
 		for (const n of tree.nodes) {
-			const r = NODE_RADIUS[n.t];
+			const r = nodeRadius(n.t);
 			if (n.x - r < minX) minX = n.x - r;
 			if (n.y - r < minY) minY = n.y - r;
 			if (n.x + r > maxX) maxX = n.x + r;
@@ -227,13 +247,16 @@
 				<!-- nodes -->
 				<g class="nodes">
 					{#each tree.nodes as n (n.h)}
-						{@const r = NODE_RADIUS[n.t]}
+						{@const isRoot = n.t === 'root'}
+						{@const r = nodeRadius(n.t)}
+						{@const iconD = isRoot
+							? NODE_RADIUS.root * 2
+							: NODE_FRAME[n.t as 'normal' | 'notable' | 'keystone'].iconD * FRAME_SCALE}
 						<!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events -->
 						<g
-							class="node {n.t} subtree-{n.s}"
+							class="node {n.t}"
 							class:allocated={planner.isTaken(n.h)}
 							class:future={planner.isFuture(n.h)}
-							class:allocatable={planner.isReachable(n.h)}
 							class:preview={previewNodes.has(n.h)}
 							data-h={n.h}
 							role="button"
@@ -249,8 +272,9 @@
 								if (!readonly && (e.key === 'Enter' || e.key === ' ')) planner.toggle(n.h);
 							}}
 						>
-							<circle class="bg" cx={n.x} cy={n.y} {r} />
-							{#if n.ic && n.t === 'root'}
+							<!-- transparent hit area covering the whole frame -->
+							<circle class="hit" cx={n.x} cy={n.y} {r} />
+							{#if isRoot}
 								<!-- start-point art: unclipped + larger so the glow shows -->
 								<image
 									href={n.ic}
@@ -260,16 +284,30 @@
 									height={r * 2.8}
 									preserveAspectRatio="xMidYMid meet"
 								/>
-							{:else if n.ic}
+							{:else}
+								<circle class="bg" cx={n.x} cy={n.y} r={iconD * 0.46} />
+								{#if n.ic}
+									<image
+										href={n.ic}
+										x={n.x - iconD / 2}
+										y={n.y - iconD / 2}
+										width={iconD}
+										height={iconD}
+										preserveAspectRatio="xMidYMid meet"
+										clip-path="url(#nodeClip)"
+									/>
+								{/if}
+								<!-- real game frame, by type + allocation state -->
 								<image
-									href={n.ic}
-									x={n.x - r + 2}
-									y={n.y - r + 2}
-									width={(r - 2) * 2}
-									height={(r - 2) * 2}
+									class="frame"
+									href={frameUrl(n.t as 'normal' | 'notable' | 'keystone', frameState(n.h))}
+									x={n.x - r}
+									y={n.y - r}
+									width={r * 2}
+									height={r * 2}
 									preserveAspectRatio="xMidYMid meet"
-									clip-path="url(#nodeClip)"
 								/>
+								<circle class="overlay" cx={n.x} cy={n.y} {r} />
 							{/if}
 						</g>
 					{/each}
@@ -427,71 +465,31 @@
 	.node {
 		cursor: pointer;
 	}
-	.node circle.bg {
-		stroke: #1a1a1a;
-		stroke-width: 2;
-		vector-effect: non-scaling-stroke;
-	}
 	.node image {
 		pointer-events: none;
 	}
-
-	.node.normal circle.bg {
-		fill: #2a2a2a;
+	/* invisible click/hover target spanning the whole frame */
+	.node circle.hit {
+		fill: transparent;
 	}
-	.node.notable circle.bg {
-		fill: #c9923a;
+	/* dark backing behind the (sometimes transparent) skill icon */
+	.node circle.bg {
+		fill: #0c0c0c;
 	}
-	.node.keystone circle.bg {
-		fill: #d6b14a;
-	}
-	.node.root circle.bg {
+	.node circle.overlay {
 		fill: none;
-		stroke: none;
+		pointer-events: none;
 	}
 
-	.node.subtree-Ritual circle.bg {
-		stroke: #d9c52b;
-	}
-	.node.subtree-Breach circle.bg {
-		stroke: #d96c1d;
-	}
-	.node.subtree-Delirium circle.bg {
-		stroke: #2bd9c1;
-	}
-	.node.subtree-Incursion circle.bg {
-		stroke: #d92b6a;
-	}
-	.node.subtree-Abyss circle.bg {
-		stroke: #6e2bd9;
-	}
-	.node.root circle.bg {
-		stroke: none;
-	}
-
-	.node.allocatable circle.bg {
-		stroke: #f0c850;
-		stroke-width: 3;
-		stroke-dasharray: 6 5;
-	}
-	.node.allocated circle.bg {
-		stroke: #ffe089;
-		stroke-width: 7;
-		stroke-dasharray: none;
-	}
 	/* planned but not yet reached at the current timeline position */
 	.node.future {
 		opacity: 0.45;
 	}
-	.node.future circle.bg {
-		stroke: #8a7a3a;
-		stroke-width: 4;
-		stroke-dasharray: none;
-	}
-	.node.preview circle.bg {
+	/* hover path preview — green ring over the frame */
+	.node.preview circle.overlay {
 		stroke: #4ade80;
 		stroke-width: 4;
-		stroke-dasharray: none;
+		vector-effect: non-scaling-stroke;
 	}
 
 	.tip {

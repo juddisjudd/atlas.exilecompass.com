@@ -84,3 +84,19 @@ export const NODE_RADIUS: Record<NodeType, number> = {
 	keystone: 55,
 	root: 80
 };
+
+export type FrameState = 'normal' | 'canallocate' | 'active';
+
+// Real game node frames (3 allocation states each). frameD = outer frame
+// diameter, iconD = inner hole the skill icon fills (native px). Scaled by
+// FRAME_SCALE for the tree.
+export const NODE_FRAME: Record<'normal' | 'notable' | 'keystone', { base: string; frameD: number; iconD: number }> = {
+	normal: { base: '/assets/passiveskillscreenpassiveframe', frameD: 84, iconD: 64 },
+	notable: { base: '/assets/atlaspassiveskillscreennotableframe', frameD: 152, iconD: 100 },
+	keystone: { base: '/assets/atlaspassiveskillscreenkeystoneframe', frameD: 220, iconD: 132 }
+};
+export const FRAME_SCALE = 0.85;
+
+export function frameUrl(t: 'normal' | 'notable' | 'keystone', state: FrameState): string {
+	return NODE_FRAME[t].base + state + '.webp';
+}

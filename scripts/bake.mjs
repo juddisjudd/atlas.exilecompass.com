@@ -151,7 +151,7 @@ for (const r of roots) {
 	const generic = name === 'Generic';
 	// subtrees: centre on the start node + its illustration offset (matches the
 	// game); generic main tree: centre on the cluster, nudged up a little.
-	const GENERIC_BG_Y_OFFSET = 550; // smaller y = up
+	const GENERIC_BG_Y_OFFSET = 460; // smaller y = up
 	// Fine-tune so the medallion ring sits on the start node (larger y = down,
 	// which raises the compass within the medallion).
 	const SUBTREE_BG_Y_OFFSET = 90;
