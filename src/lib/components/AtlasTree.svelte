@@ -61,6 +61,32 @@
 	const takenOrRoot = (h: number) => tree.roots.includes(h) || planner.isTaken(h);
 	const plannedOrRoot = (h: number) => tree.roots.includes(h) || planner.isPlanned(h);
 
+	// Per-subtree point counts: allocated up to the timeline cursor / total
+	// allocatable nodes in that tree.
+	const subtreeTotals: Record<string, number> = (() => {
+		const t: Record<string, number> = {};
+		for (const n of tree.nodes) if (n.t !== 'root') t[n.s] = (t[n.s] ?? 0) + 1;
+		return t;
+	})();
+	const subtreeTaken = $derived.by(() => {
+		const c: Record<string, number> = {};
+		for (let i = 0; i < planner.cursor; i++) {
+			const n = nodeByHash.get(planner.steps[i]);
+			if (n) c[n.s] = (c[n.s] ?? 0) + 1;
+		}
+		return c;
+	});
+	const taken = (s: string) => subtreeTaken[s] ?? 0;
+	const total = (s: string) => subtreeTotals[s] ?? 0;
+
+	const SUBTREES = [
+		{ name: 'Ritual', color: '#d9c52b' },
+		{ name: 'Breach', color: '#d96c1d' },
+		{ name: 'Delirium', color: '#2bd9c1' },
+		{ name: 'Incursion', color: '#d92b6a' },
+		{ name: 'Abyss', color: '#6e2bd9' }
+	];
+
 	// --- precomputed edge paths (node positions are static) ---
 	const edges = tree.edges.map((e) => {
 		const a = nodeByHash.get(e.a)!;
@@ -185,7 +211,7 @@
 <div class="planner">
 	<header>
 		<h1>Atlas Tree</h1>
-		<span class="stat"><b>{planner.count}</b> points</span>
+		<span class="stat"><b>{taken('Generic')}</b> / {total('Generic')} points</span>
 		<span class="spacer"></span>
 		{#if shareUrl}
 			<input class="sharelink" readonly value={shareUrl} onfocus={(e) => e.currentTarget.select()} />
@@ -338,11 +364,13 @@
 
 		<div class="legend">
 			<h3>Subtrees</h3>
-			<div class="row"><span class="sw" style="background:#d9c52b"></span> Ritual</div>
-			<div class="row"><span class="sw" style="background:#d96c1d"></span> Breach</div>
-			<div class="row"><span class="sw" style="background:#2bd9c1"></span> Delirium</div>
-			<div class="row"><span class="sw" style="background:#d92b6a"></span> Incursion</div>
-			<div class="row"><span class="sw" style="background:#6e2bd9"></span> Abyss</div>
+			{#each SUBTREES as st (st.name)}
+				<div class="row">
+					<span class="sw" style="background:{st.color}"></span>
+					<span class="lname">{st.name}</span>
+					<span class="lcount">{taken(st.name)}/{total(st.name)}</span>
+				</div>
+			{/each}
 		</div>
 		<div class="help">
 			<div><kbd>Drag</kbd> pan · <kbd>Wheel</kbd> zoom</div>
@@ -562,6 +590,17 @@
 		height: 10px;
 		border-radius: 50%;
 		border: 1px solid #1a1a1a;
+		flex: none;
+	}
+	.legend .lname {
+		flex: 1;
+	}
+	.legend .lcount {
+		color: #f0c850;
+		font:
+			11px ui-monospace,
+			monospace;
+		margin-left: 10px;
 	}
 	.help kbd {
 		background: #1a1a1a;
