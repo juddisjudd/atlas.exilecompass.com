@@ -15,6 +15,8 @@ export class Planner {
 	cursor = $state(0); // how many steps are "taken" in the current view
 	milestones = $state<Milestone[]>([]);
 	title = $state('');
+	// node hash -> chosen option id, for multi-choice selector nodes
+	choices = $state<Map<number, string>>(new Map());
 
 	// hash -> position in steps
 	stepIndex = $derived.by(() => {
@@ -63,6 +65,18 @@ export class Planner {
 		return bfsPath(h, this.planned);
 	}
 
+	/** Selected option id for a selector node, or undefined if unset. */
+	choiceOf(h: number): string | undefined {
+		return this.choices.get(h);
+	}
+	/** Set (or clear) the chosen option for a selector node. */
+	setChoice(h: number, optionId: string | null): void {
+		const next = new Map(this.choices);
+		if (optionId == null) next.delete(h);
+		else next.set(h, optionId);
+		this.choices = next;
+	}
+
 	/** Allocate the whole path to a node, or remove it (pruning orphans). */
 	toggle(h: number): void {
 		if (rootSet.has(h)) return;
@@ -71,6 +85,10 @@ export class Planner {
 			set.delete(h);
 			const keep = reachableAllocated(set);
 			this.steps = this.steps.filter((s) => s !== h && keep.has(s));
+			// drop choices for nodes that are no longer allocated
+			const next = new Map<number, string>();
+			for (const [k, v] of this.choices) if (keep.has(k)) next.set(k, v);
+			this.choices = next;
 			this.#clampMilestones();
 		} else {
 			const chain = bfsPath(h, this.planned);
@@ -86,10 +104,16 @@ export class Planner {
 		this.cursor = 0;
 		this.milestones = [];
 		this.title = '';
+		this.choices = new Map();
 	}
 
 	/** Load a decoded plan, dropping any hashes not present in the current tree. */
-	load(plan: { steps: number[]; milestones: Milestone[]; title?: string }): void {
+	load(plan: {
+		steps: number[];
+		milestones: Milestone[];
+		title?: string;
+		choices?: Record<number, string>;
+	}): void {
 		this.steps = plan.steps.filter((h) => nodeByHash.has(h));
 		const n = this.steps.length;
 		this.milestones = plan.milestones
@@ -97,6 +121,16 @@ export class Planner {
 			.sort((a, b) => a.at - b.at);
 		this.title = plan.title ?? '';
 		this.cursor = n;
+		// restore choices for allocated nodes whose option still exists in the tree
+		const allocated = new Set(this.steps);
+		const next = new Map<number, string>();
+		for (const [k, v] of Object.entries(plan.choices ?? {})) {
+			const h = Number(k);
+			if (!allocated.has(h)) continue;
+			const node = nodeByHash.get(h);
+			if (node?.c?.some((o) => o.id === v)) next.set(h, v);
+		}
+		this.choices = next;
 	}
 
 	setCursor(k: number): void {

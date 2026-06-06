@@ -35,7 +35,8 @@
 		const code = encodePlan({
 			steps: planner.steps,
 			milestones: planner.milestones,
-			title: planner.title
+			title: planner.title,
+			choices: Object.fromEntries(planner.choices)
 		});
 		location.hash = code;
 		try {
@@ -206,6 +207,23 @@
 
 	const tipNode = $derived(tip ? nodeByHash.get(tip.h) : null);
 	const tipRect = $derived(tip && viewport ? viewport.getBoundingClientRect() : null);
+
+	// --- multi-choice selector nodes ---
+	// Variant labels carry a {0} magnitude placeholder; drop it for the menu text.
+	function fmtChoice(label: string): string {
+		const s = label
+			.replace(/\{0\}%?/g, '')
+			.replace(/\s+/g, ' ')
+			.trim();
+		return s ? s[0].toUpperCase() + s.slice(1) : label;
+	}
+	// Allocated selector nodes (in the full plan), for the Selections panel.
+	const selectorNodes = $derived(tree.nodes.filter((n) => n.c && planner.isPlanned(n.h)));
+	const chosenLabel = (n: { c?: { id: string; label: string }[]; h: number }) => {
+		const id = planner.choiceOf(n.h);
+		const opt = n.c?.find((o) => o.id === id);
+		return opt ? fmtChoice(opt.label) : null;
+	};
 </script>
 
 <div class="planner">
@@ -362,6 +380,35 @@
 				{:else}
 					<div class="meta" style="font-style:italic">no stats</div>
 				{/if}
+				{#if tipNode.c}
+					{@const sel = chosenLabel(tipNode)}
+					<div class="choice-line">
+						{#if sel}Selected: <b>{sel}</b>{:else}<i>Allocate, then choose a bonus →</i>{/if}
+					</div>
+				{/if}
+			</div>
+		{/if}
+
+		{#if selectorNodes.length}
+			<div class="choices-panel">
+				<h3>Selections</h3>
+				{#each selectorNodes as n (n.h)}
+					<div class="crow">
+						<span class="cname" title={n.n}>{n.n}</span>
+						<select
+							class="cselect"
+							class:unset={!planner.choiceOf(n.h)}
+							disabled={readonly}
+							value={planner.choiceOf(n.h) ?? ''}
+							onchange={(e) => planner.setChoice(n.h, e.currentTarget.value || null)}
+						>
+							<option value="">— choose —</option>
+							{#each n.c ?? [] as o (o.id)}
+								<option value={o.id}>{fmtChoice(o.label)}</option>
+							{/each}
+						</select>
+					</div>
+				{/each}
 			</div>
 		{/if}
 
@@ -631,5 +678,70 @@
 		padding: 1px 5px;
 		font: 11px ui-monospace, monospace;
 		color: #d8dae0;
+	}
+
+	.tip .choice-line {
+		margin-top: 6px;
+		padding-top: 6px;
+		border-top: 1px solid #2a2a2a;
+		color: #8a8d97;
+		font-size: 11px;
+	}
+	.tip .choice-line b {
+		color: #f0c850;
+	}
+
+	/* multi-choice selector picker */
+	.choices-panel {
+		position: absolute;
+		top: 12px;
+		right: 12px;
+		background: rgba(15, 15, 15, 0.9);
+		border: 1px solid #2a2a2a;
+		border-radius: 4px;
+		padding: 8px 10px;
+		font-size: 11px;
+		z-index: 12;
+		max-width: 280px;
+		max-height: 45%;
+		overflow-y: auto;
+	}
+	.choices-panel h3 {
+		font-size: 11px;
+		margin: 0 0 6px;
+		color: #8a8d97;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+	.choices-panel .crow {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 4px 0;
+	}
+	.choices-panel .cname {
+		flex: 1;
+		color: #c9aa45;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 110px;
+	}
+	.choices-panel .cselect {
+		flex: 1;
+		min-width: 0;
+		background: #0d0d0d;
+		color: #d8dae0;
+		border: 1px solid #2a2a2a;
+		border-radius: 3px;
+		padding: 2px 4px;
+		font-size: 11px;
+	}
+	.choices-panel .cselect.unset {
+		border-color: #6b5a1d;
+		color: #f0c850;
+	}
+	.choices-panel .cselect:disabled {
+		opacity: 0.7;
 	}
 </style>

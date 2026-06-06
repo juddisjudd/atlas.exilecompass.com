@@ -1,0 +1,159 @@
+{
+  "_comment": "Hand-curated map: selector node dummy_* stat id -> ordered list of option stat ids. Option labels are resolved from data/atlas_variant_labels.json at bake time. Keyed by dummy stat id so nodes sharing a selector (e.g. Crystalline Patterns + Essence Dowsing; Overlord's Influence + Domain) map identically. Selectors whose options were not present in the game export are intentionally absent (no picker).",
+
+  "dummy_display_mountain_mastery_choice": [
+    "map_mountain_item_drop_rarity_+%",
+    "map_mountain_rune_drop_chance_+%",
+    "map_mountain_tower_augment_quantity_+%"
+  ],
+  "dummy_display_forest_mastery_choice": [
+    "map_forest_lineage_support_drop_chance_+%",
+    "map_forest_number_of_rare_packs_+%",
+    "map_forest_uncut_gem_drop_chance_+%"
+  ],
+  "dummy_display_desert_mastery_choice": [
+    "map_desert_monster_potency_+%",
+    "map_desert_currency_alchemy_as_regal_chance_%",
+    "map_desert_currency_regal_as_alchemy_chance_%"
+  ],
+  "dummy_display_grass_mastery_choice": [
+    "map_grass_monster_potency_+%",
+    "map_grass_currency_upgrade_basic_to_greater_chance_%",
+    "map_grass_currency_upgrade_greater_to_perfect_chance_%"
+  ],
+  "dummy_display_water_mastery_choice": [
+    "map_water_gold_+%",
+    "map_water_chest_extra_currency_chance_%",
+    "map_water_chest_extra_jewellery_chance_%"
+  ],
+  "dummy_display_swamp_mastery_choice": [
+    "map_swamp_pack_size_+%",
+    "map_swamp_currency_chaos_as_exalted_chance_%",
+    "map_swamp_currency_exalted_as_chaos_chance_%"
+  ],
+
+  "dummy_display_abyss_faction_selector": [
+    "dummy_display_abyss_faction_random",
+    "map_abyss_faction_always_amanamu",
+    "map_abyss_faction_always_kurgal",
+    "map_abyss_faction_always_ulaman"
+  ],
+  "dummy_display_abyss_eye_omen_lineage_drop_selector": [
+    "map_abyss_eye_drop_chance_+%",
+    "map_abyss_lineage_support_drop_chance_+%",
+    "map_abyss_omen_drop_chance_+%"
+  ],
+
+  "dummy_display_essence_selector": [
+    "map_essence_attack_chance_+%",
+    "map_essence_caster_chance_+%",
+    "map_essence_attribute_chance_+%",
+    "map_essence_physical_chance_+%",
+    "map_essence_fire_chance_+%",
+    "map_essence_cold_chance_+%",
+    "map_essence_lightning_chance_+%",
+    "map_essence_chaos_chance_+%",
+    "map_essence_life_chance_+%",
+    "map_essence_mana_chance_+%",
+    "map_essence_armour_evasion_energy_shield_chance_+%",
+    "map_essence_critical_chance_+%",
+    "map_essence_speed_chance_+%",
+    "map_essence_rarity_chance_+%",
+    "map_essence_ally_chance_+%"
+  ],
+
+  "dummy_display_fruit_selection": [
+    "map_breach_fruit_amulet_chance_+%",
+    "map_breach_fruit_belt_chance_+%",
+    "map_breach_fruit_ring_chance_+%",
+    "map_breach_fruit_currency_chance_+%"
+  ],
+  "dummy_display_breach_skill_mastery": [
+    "map_breach_hive_number_of_skills_+%",
+    "map_breach_hive_skill_damage_+%"
+  ],
+  "dummy_display_breach_reveal_selection": [
+    "dummy_display_breach_breachstone_extra_modifier",
+    "dummy_display_breach_extra_breachstone_use_enabled"
+  ],
+
+  "dummy_display_faridun_city_biome_selector": [
+    "map_city_faridun_also_count_as_mountain",
+    "map_city_faridun_also_count_as_desert"
+  ],
+  "dummy_display_vaal_city_biome_selector": [
+    "map_city_vaal_also_count_as_forest",
+    "map_city_vaal_also_count_as_water"
+  ],
+  "dummy_display_ezomyte_city_biome_selector": [
+    "map_city_ezomyte_also_count_as_grass",
+    "map_city_ezomyte_also_count_as_swamp"
+  ],
+
+  "dummy_display_rogue_exile_unique_selector": [
+    "map_rogue_exile_unique_weapon_chance_+%",
+    "map_rogue_exile_unique_armour_chance_+%",
+    "map_rogue_exile_unique_jewellery_chance_+%"
+  ],
+  "dummy_display_rogue_exile_attribute_selector": [
+    "map_rogue_exile_strength_chance_+%",
+    "map_rogue_exile_dexterity_chance_+%",
+    "map_rogue_exile_intelligence_chance_+%"
+  ],
+
+  "dummy_display_shrine_type_selector": [
+    "map_covetous_shrine_chance_+%",
+    "map_enlightening_shrine_chance_+%",
+    "map_gloom_shrine_chance_+%"
+  ],
+
+  "dummy_display_azmeri_spirit_type_selector": [
+    "map_primal_spirit_chance_+%",
+    "map_vivid_spirit_chance_+%",
+    "map_wild_spirit_chance_+%"
+  ],
+
+  "dummy_display_strongbox_attribute_replacements": [
+    "dummy_display_strongbox_no_attribute_replacements",
+    "map_strongbox_can_roll_attribute_replacements_strength",
+    "map_strongbox_can_roll_attribute_replacements_dexterity",
+    "map_strongbox_can_roll_attribute_replacements_intelligence"
+  ],
+
+  "dummy_display_powerful_map_boss_added_content": [
+    "maps_with_powerful_bosses_additional_strongbox_+",
+    "maps_with_powerful_bosses_additional_shrine_+",
+    "maps_with_powerful_bosses_additional_essence_+",
+    "maps_with_powerful_bosses_additional_spirit_+",
+    "maps_with_powerful_bosses_additional_stone_circle_+",
+    "maps_with_powerful_bosses_additional_rogue_exile_+"
+  ],
+
+  "dummy_display_rare_monster_difficulty_selector": [
+    "map_rare_monster_potency_+%",
+    "map_rare_monster_modifiers_chance_%",
+    "map_additional_rare_in_rare_pack_chance_+%",
+    "map_rare_monster_dropped_item_rarity_+%"
+  ],
+  "dummy_display_magic_pack_difficulty_selector": [
+    "map_magic_monster_potency_+%",
+    "map_magic_monster_additional_modifier_chance_%",
+    "map_number_of_magic_packs_+%",
+    "map_magic_monster_dropped_item_rarity_+%"
+  ],
+  "dummy_atlas_pack_size_selector": [
+    "map_pack_size_+%",
+    "map_monster_potency_+%",
+    "map_item_drop_rarity_+%"
+  ],
+
+  "dummy_display_content_chances_selector": [
+    "dummy_display_atlas_multichoice_no_bias",
+    "map_strongbox_chance_+%",
+    "map_shrine_chance_+%",
+    "map_monolith_chance_+%",
+    "map_stone_circle_chance_+%",
+    "map_tormented_spirit_chance_+%",
+    "map_rogue_exile_chance_+%"
+  ]
+}

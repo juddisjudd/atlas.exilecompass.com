@@ -3,6 +3,12 @@ import treeJson from './tree.json';
 
 export type NodeType = 'normal' | 'notable' | 'keystone' | 'root';
 
+/** A selectable option on a multi-choice selector node. */
+export interface NodeChoice {
+	id: string; // option stat id (the join key persisted in shares)
+	label: string; // display text
+}
+
 export interface TreeNode {
 	h: number; // hash / id
 	x: number;
@@ -14,6 +20,7 @@ export interface TreeNode {
 	id: string; // internal id (AtlasRitualNotable16_ ...)
 	ic: string; // local icon path (/icons/x.webp)
 	st: string[]; // stat lines
+	c?: NodeChoice[]; // multi-choice options (selector nodes only)
 }
 
 export interface TreeEdge {

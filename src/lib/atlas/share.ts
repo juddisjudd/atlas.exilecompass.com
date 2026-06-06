@@ -5,10 +5,14 @@
 //   u16 stepCount, then stepCount * u16 node hashes
 //   u8  milestoneCount, then per milestone: u16 at, u8 labelLen, label (utf8)
 //   u8  titleLen, title (utf8)
-import { tree } from './tree-data';
+// v2 appends, after the title:
+//   u16 choiceCount, then per choice: u16 node hash, u8 option index
+// The option is stored as its index within the node's baked `c` list (1 byte);
+// the treeVersion guard ensures that index still resolves to the same option.
+import { tree, nodeByHash } from './tree-data';
 import type { Milestone } from './planner.svelte';
 
-export const SHARE_VERSION = 1;
+export const SHARE_VERSION = 2;
 
 export interface Plan {
 	v: number;
@@ -16,12 +20,14 @@ export interface Plan {
 	steps: number[];
 	milestones: Milestone[];
 	title: string;
+	choices: Record<number, string>; // node hash -> chosen option id
 }
 
 export interface PlanInput {
 	steps: number[];
 	milestones: Milestone[];
 	title?: string;
+	choices?: Record<number, string>; // node hash -> chosen option id
 }
 
 const encoder = new TextEncoder();
@@ -69,6 +75,18 @@ export function encodePlan(plan: PlanInput): string {
 		str(m.label);
 	}
 	str(plan.title ?? '');
+	// v2: choices, encoded as (hash, option index) pairs
+	const choiceEntries: [number, number][] = [];
+	for (const [k, id] of Object.entries(plan.choices ?? {})) {
+		const h = Number(k);
+		const idx = nodeByHash.get(h)?.c?.findIndex((o) => o.id === id) ?? -1;
+		if (idx >= 0) choiceEntries.push([h, idx]);
+	}
+	u16(choiceEntries.length);
+	for (const [h, idx] of choiceEntries) {
+		u16(h & 0xffff);
+		bytes.push(idx & 0xff);
+	}
 	return bytesToBase64Url(Uint8Array.from(bytes));
 }
 
@@ -86,7 +104,7 @@ export function decodePlan(code: string): Plan | null {
 		};
 
 		const v = u8();
-		if (v !== SHARE_VERSION) return null; // unknown version
+		if (v < 1 || v > SHARE_VERSION) return null; // unknown version
 		const treeVersion = bytesToHex(Array.from(bytes.slice(p, p + 6)));
 		p += 6;
 		const stepCount = u16();
@@ -100,7 +118,17 @@ export function decodePlan(code: string): Plan | null {
 			milestones.push({ at, label });
 		}
 		const title = str();
-		return { v, treeVersion, steps, milestones, title };
+		const choices: Record<number, string> = {};
+		if (v >= 2 && p < bytes.length) {
+			const cc = u16();
+			for (let i = 0; i < cc; i++) {
+				const h = u16();
+				const idx = u8();
+				const id = nodeByHash.get(h)?.c?.[idx]?.id;
+				if (id) choices[h] = id;
+			}
+		}
+		return { v, treeVersion, steps, milestones, title, choices };
 	} catch {
 		return null;
 	}

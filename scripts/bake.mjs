@@ -16,11 +16,26 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dataUsRaw = readFileSync(join(root, 'data/data_us.json'), 'utf8');
 const dataUs = JSON.parse(dataUsRaw);
 const atlas = JSON.parse(readFileSync(join(root, 'data/Atlas.json'), 'utf8'));
+// Multi-choice selector support: variant option labels (id -> text) and the
+// hand-curated map of selector dummy-stat id -> ordered option stat ids.
+const variantLabels = JSON.parse(readFileSync(join(root, 'data/atlas_variant_labels.json'), 'utf8'));
+const selectorOptions = JSON.parse(readFileSync(join(root, 'data/selector-options.json'), 'utf8'));
 
 const { orbitRadii, skillsPerOrbit } = dataUs.constants;
 const groups = dataUs.groups;
 const nodesIn = dataUs.nodes;
 const passives = atlas.passives; // hash -> game flags
+
+// A selector node carries a single dummy_* display stat. If that dummy id is in
+// the curated map, return its options as [{ id, label }]; else null.
+function choicesFor(hash) {
+	const stats = passives[String(hash)]?.stats || {};
+	const dummyId = Object.keys(stats).find((k) => k.startsWith('dummy'));
+	if (!dummyId) return null;
+	const opts = selectorOptions[dummyId];
+	if (!opts) return null;
+	return opts.map((id) => ({ id, label: variantLabels[id] ?? id }));
+}
 
 const TWO_PI = Math.PI * 2;
 
@@ -119,6 +134,7 @@ for (const [h, n] of Object.entries(nodesIn)) {
 	const p = nodePos(n);
 	if (p) pos[h] = p;
 	if (t === 'mastery') continue;
+	const c = choicesFor(h);
 	nodes.push({
 		h: +h,
 		x: p?.x ?? 0,
@@ -129,7 +145,8 @@ for (const [h, n] of Object.entries(nodesIn)) {
 		n: n.name || n.id || String(h),
 		id: n.id || '',
 		ic: t === 'root' ? rootImage[h] || '' : iconPath(n.icon),
-		st: n.stats || []
+		st: n.stats || [],
+		...(c ? { c } : {})
 	});
 }
 
