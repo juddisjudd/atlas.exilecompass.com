@@ -210,7 +210,10 @@
 
 <div class="planner">
 	<header>
-		<h1>Atlas Tree</h1>
+		<h1>
+			<a class="brand" href="https://exilecompass.com">Exile<b>Compass</b></a>
+			<span class="sep">|</span> Atlas Tree
+		</h1>
 		<span class="stat"><b>{taken('Generic')}</b> / {total('Generic')} points</span>
 		<span class="spacer"></span>
 		{#if shareUrl}
@@ -404,6 +407,25 @@
 		font-weight: 600;
 		color: #c9aa45;
 		margin: 0;
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+	}
+	header h1 .brand {
+		color: #d8dae0;
+		text-decoration: none;
+		font-weight: 500;
+	}
+	header h1 .brand b {
+		color: #c9aa45;
+		font-weight: 700;
+	}
+	header h1 .brand:hover {
+		color: #fff;
+	}
+	header h1 .sep {
+		color: #59564c;
+		font-weight: 400;
 	}
 	header .stat {
 		color: #8a8d97;
