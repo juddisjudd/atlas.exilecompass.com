@@ -45,21 +45,14 @@
   ],
 
   "dummy_display_essence_selector": [
-    "map_essence_attack_chance_+%",
-    "map_essence_caster_chance_+%",
-    "map_essence_attribute_chance_+%",
+    "map_essence_life_chance_+%",
+    "map_essence_mana_chance_+%",
+    "map_essence_armour_evasion_energy_shield_chance_+%",
     "map_essence_physical_chance_+%",
     "map_essence_fire_chance_+%",
     "map_essence_cold_chance_+%",
     "map_essence_lightning_chance_+%",
-    "map_essence_chaos_chance_+%",
-    "map_essence_life_chance_+%",
-    "map_essence_mana_chance_+%",
-    "map_essence_armour_evasion_energy_shield_chance_+%",
-    "map_essence_critical_chance_+%",
-    "map_essence_speed_chance_+%",
-    "map_essence_rarity_chance_+%",
-    "map_essence_ally_chance_+%"
+    "map_essence_chaos_chance_+%"
   ],
 
   "dummy_display_fruit_selection": [

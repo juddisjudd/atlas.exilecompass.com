@@ -210,14 +210,14 @@
 	const previewChain = $derived(hovered == null || readonly ? null : planner.pathTo(hovered));
 	const previewNodes = $derived(new Set(previewChain ? previewChain.slice(1) : []));
 	const previewEdges = $derived.by(() => {
-		const s = new Set<string>();
+		const e: string[] = [];
 		if (previewChain) {
 			for (let i = 0; i < previewChain.length - 1; i++) {
-				s.add(`${previewChain[i]}-${previewChain[i + 1]}`);
-				s.add(`${previewChain[i + 1]}-${previewChain[i]}`);
+				e.push(`${previewChain[i]}-${previewChain[i + 1]}`);
+				e.push(`${previewChain[i + 1]}-${previewChain[i]}`);
 			}
 		}
-		return s;
+		return new Set(e);
 	});
 
 	function onNodeEnter(h: number, e: PointerEvent) {
@@ -456,7 +456,6 @@
 						{@const iconD = isRoot
 							? NODE_RADIUS.root * 2
 							: NODE_FRAME[n.t as 'normal' | 'notable' | 'keystone'].iconD * FRAME_SCALE}
-						<!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events -->
 						<g
 							class="node {n.t}"
 							class:allocated={planner.isTaken(n.h)}
@@ -891,7 +890,7 @@
 		border-radius: 4px;
 		padding: 8px 10px;
 		font-size: 12px;
-		max-width: 320px;
+		max-width: min(540px, 90vw);
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
 		z-index: 20;
 	}
@@ -1026,7 +1025,7 @@
 		display: flex;
 		flex-direction: column;
 		min-width: 150px;
-		max-width: 280px;
+		max-width: min(560px, 90vw);
 		background: rgba(12, 12, 12, 0.98);
 		border: 1px solid #3a3a3a;
 		border-radius: 5px;

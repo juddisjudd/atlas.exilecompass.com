@@ -307,39 +307,11 @@
 "t": "Corrupting Essence Monsters Corrupts them an additional time"
 }
 ],
-"map_essence_ally_chance_+%": [
-{
-"min": null,
-"max": null,
-"t": "Greater Essence of Command and Perfect Essence of Command"
-}
-],
 "map_essence_armour_evasion_energy_shield_chance_+%": [
 {
 "min": null,
 "max": null,
 "t": "Greater Essence of Enhancement and Perfect Essence of Enhancement"
-}
-],
-"map_essence_attack_chance_+%": [
-{
-"min": null,
-"max": null,
-"t": "Greater Essence of Battle and Perfect Essence of Battle"
-}
-],
-"map_essence_attribute_chance_+%": [
-{
-"min": null,
-"max": null,
-"t": "Greater Essence of the Infinite and Perfect Essence of the Infinite"
-}
-],
-"map_essence_caster_chance_+%": [
-{
-"min": null,
-"max": null,
-"t": "Greater Essence of Sorcery and Perfect Essence of Sorcery"
 }
 ],
 "map_essence_chaos_chance_+%": [
@@ -361,13 +333,6 @@
 "min": null,
 "max": null,
 "t": "Corrupting Essence Monsters cannot immediately release them and will always change their Essences"
-}
-],
-"map_essence_critical_chance_+%": [
-{
-"min": null,
-"max": null,
-"t": "Greater Essence of Seeking and Perfect Essence of Seeking"
 }
 ],
 "map_essence_duplicate_monster_if_corrupted_chance_%": [
@@ -417,20 +382,6 @@
 "min": null,
 "max": null,
 "t": "Greater Essence of Abrasion and Perfect Essence of Abrasion"
-}
-],
-"map_essence_rarity_chance_+%": [
-{
-"min": null,
-"max": null,
-"t": "Greater Essence of Opulence and Perfect Essence of Opulence"
-}
-],
-"map_essence_speed_chance_+%": [
-{
-"min": null,
-"max": null,
-"t": "Greater/Perfect Essence of Haste and Greater/Perfect Essence of Alacrity"
 }
 ],
 "map_forest_lineage_support_drop_chance_+%": [
