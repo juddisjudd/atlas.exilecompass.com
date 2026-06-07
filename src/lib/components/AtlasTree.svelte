@@ -102,6 +102,9 @@
 	// --- view (pan / zoom) ---
 	let view = $state({ tx: 0, ty: 0, s: 1 });
 	let viewport = $state<HTMLDivElement>();
+	// Hide the canvas until the first zoom-to-fit lands, so the page doesn't flash
+	// the tree at scale 1 before snapping to fit.
+	let ready = $state(false);
 
 	// Content bounds from node positions + radii (excludes decorative
 	// backgrounds, which would otherwise inflate the zoom-to-fit).
@@ -135,6 +138,7 @@
 			tx: viewport.clientWidth / 2 - (minX + w / 2) * s,
 			ty: viewport.clientHeight / 2 - (minY + h / 2) * s
 		};
+		ready = true;
 	}
 	$effect(() => {
 		// fit once the scene is laid out
@@ -146,7 +150,11 @@
 	let lastX = 0,
 		lastY = 0;
 	function onPointerDown(e: PointerEvent) {
+		// Clicks inside the menu, or on a node, are handled elsewhere (the node's
+		// own click toggles its menu); don't pan or dismiss for those.
+		if ((e.target as Element).closest('.node-menu')) return;
 		if (!viewport || (e.target as Element).closest('.node')) return;
+		menuH = null; // a press on empty canvas dismisses the choice menu
 		dragging = true;
 		lastX = e.clientX;
 		lastY = e.clientY;
@@ -163,6 +171,7 @@
 	}
 	function onWheel(e: WheelEvent) {
 		if (!viewport) return;
+		menuH = null;
 		e.preventDefault();
 		const r = viewport.getBoundingClientRect();
 		const mx = e.clientX - r.left,
@@ -217,14 +226,25 @@
 			.trim();
 		return s ? s[0].toUpperCase() + s.slice(1) : label;
 	}
-	// Allocated selector nodes (in the full plan), for the Selections panel.
-	const selectorNodes = $derived(tree.nodes.filter((n) => n.c && planner.isPlanned(n.h)));
-	const chosenLabel = (n: { c?: { id: string; label: string }[]; h: number }) => {
-		const id = planner.choiceOf(n.h);
-		const opt = n.c?.find((o) => o.id === id);
-		return opt ? fmtChoice(opt.label) : null;
-	};
+	// --- at-node choice menu (for multi-choice selector nodes) ---
+	// Holds the hash of the node whose menu is open; positioned at the node.
+	let menuH = $state<number | null>(null);
+	const menuNode = $derived(menuH == null ? null : nodeByHash.get(menuH));
+
+	// Click behaviour: selector nodes already in the plan open their choice menu;
+	// everything else allocates/removes as usual.
+	function onNodeClick(h: number) {
+		if (readonly) return;
+		const node = nodeByHash.get(h);
+		if (node?.c && planner.isPlanned(h)) {
+			menuH = menuH === h ? null : h;
+		} else {
+			planner.toggle(h);
+		}
+	}
 </script>
+
+<svelte:window onkeydown={(e) => e.key === 'Escape' && (menuH = null)} />
 
 <div class="planner">
 	<header>
@@ -244,6 +264,15 @@
 			<button onclick={() => planner.clear()}>Clear</button>
 		{/if}
 		<button onclick={zoomFit}>Zoom to fit</button>
+		<a
+			class="kofi"
+			href="https://ko-fi.com/ohitsjudd"
+			target="_blank"
+			rel="noopener noreferrer"
+			title="Support me on Ko-fi"
+		>
+			<img src="/support_me_on_kofi_beige.webp" alt="Support me on Ko-fi" />
+		</a>
 	</header>
 
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -256,7 +285,7 @@
 		onpointerup={onPointerUp}
 		onwheel={onWheel}
 	>
-		<svg class="canvas">
+		<svg class="canvas" style:opacity={ready ? 1 : 0}>
 			<defs>
 				<clipPath id="nodeClip" clipPathUnits="objectBoundingBox">
 					<circle cx="0.5" cy="0.5" r="0.5" />
@@ -313,10 +342,10 @@
 							onpointerleave={onNodeLeave}
 							onclick={(e) => {
 								e.stopPropagation();
-								if (!readonly) planner.toggle(n.h);
+								onNodeClick(n.h);
 							}}
 							onkeydown={(e) => {
-								if (!readonly && (e.key === 'Enter' || e.key === ' ')) planner.toggle(n.h);
+								if (e.key === 'Enter' || e.key === ' ') onNodeClick(n.h);
 							}}
 						>
 							<!-- transparent hit area covering the whole frame -->
@@ -377,37 +406,43 @@
 					{#each tipNode.st as line (line)}
 						<div class="line">{line}</div>
 					{/each}
-				{:else}
+				{:else if !tipNode.c}
 					<div class="meta" style="font-style:italic">no stats</div>
 				{/if}
 				{#if tipNode.c}
-					{@const sel = chosenLabel(tipNode)}
-					<div class="choice-line">
-						{#if sel}Selected: <b>{sel}</b>{:else}<i>Allocate, then choose a bonus →</i>{/if}
+					<div class="opts">
+						{#each tipNode.c as o, i (i)}
+							<div class="opt" class:sel={i === planner.choiceOf(tipNode.h)}>
+								<span class="num">{i + 1}</span>
+								<span>{fmtChoice(o.label)}</span>
+							</div>
+						{/each}
 					</div>
+					{#if !readonly}
+						<div class="meta choice-hint">click node again to choose</div>
+					{/if}
 				{/if}
 			</div>
 		{/if}
 
-		{#if selectorNodes.length}
-			<div class="choices-panel">
-				<h3>Selections</h3>
-				{#each selectorNodes as n (n.h)}
-					<div class="crow">
-						<span class="cname" title={n.n}>{n.n}</span>
-						<select
-							class="cselect"
-							class:unset={!planner.choiceOf(n.h)}
-							disabled={readonly}
-							value={planner.choiceOf(n.h) ?? ''}
-							onchange={(e) => planner.setChoice(n.h, e.currentTarget.value || null)}
-						>
-							<option value="">— choose —</option>
-							{#each n.c ?? [] as o (o.id)}
-								<option value={o.id}>{fmtChoice(o.label)}</option>
-							{/each}
-						</select>
-					</div>
+		<!-- at-node choice menu (game-style): Unallocate + the selectable bonuses -->
+		{#if menuNode && menuNode.c}
+			<div
+				class="node-menu"
+				style:left="{menuNode.x * view.s + view.tx}px"
+				style:top="{menuNode.y * view.s + view.ty}px"
+			>
+				<button class="mi unalloc" onclick={() => { planner.toggle(menuNode.h); menuH = null; }}>
+					Unallocate
+				</button>
+				{#each menuNode.c as o, i (i)}
+					<button
+						class="mi"
+						class:sel={i === planner.choiceOf(menuNode.h)}
+						onclick={() => { planner.setChoice(menuNode.h, i); menuH = null; }}
+					>
+						{fmtChoice(o.label)}
+					</button>
 				{/each}
 			</div>
 		{/if}
@@ -498,17 +533,34 @@
 		color: #c9aa45;
 	}
 	header button.primary {
-		border-color: #3a5a3a;
-		color: #9be8a8;
+		border-color: #4ade80;
+		color: #5ef08f;
+		background: #0e1f14;
 	}
 	header button.primary:hover {
-		border-color: #4ade80;
-		color: #4ade80;
+		border-color: #86efac;
+		color: #86efac;
 	}
 	header button:disabled {
 		opacity: 0.5;
 		cursor: default;
 	}
+	header .kofi {
+		display: inline-flex;
+		align-items: center;
+		height: 28px;
+		transition: opacity 0.15s;
+	}
+	header .kofi:hover {
+		opacity: 0.8;
+	}
+	header .kofi img {
+		height: 100%;
+		width: auto;
+		display: block;
+		border-radius: 4px;
+	}
+
 	header .sharelink {
 		background: #0d0d0d;
 		border: 1px solid #2a2a2a;
@@ -536,6 +588,7 @@
 		width: 100%;
 		height: 100%;
 		display: block;
+		transition: opacity 0.15s ease-out;
 	}
 
 	.edge {
@@ -680,68 +733,86 @@
 		color: #d8dae0;
 	}
 
-	.tip .choice-line {
+	/* multi-choice options listed in the hover tooltip (numbered, like in-game) */
+	.tip .opts {
 		margin-top: 6px;
 		padding-top: 6px;
 		border-top: 1px solid #2a2a2a;
-		color: #8a8d97;
-		font-size: 11px;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
 	}
-	.tip .choice-line b {
-		color: #f0c850;
+	.tip .opt {
+		display: flex;
+		align-items: baseline;
+		gap: 6px;
+		color: #b9bcc4;
+		line-height: 1.3;
+	}
+	.tip .opt .num {
+		flex: none;
+		min-width: 14px;
+		text-align: center;
+		color: #6b7280;
+		font:
+			10px ui-monospace,
+			monospace;
+	}
+	.tip .opt.sel {
+		color: #5ef08f;
+		font-weight: 600;
+	}
+	.tip .opt.sel .num {
+		color: #5ef08f;
+	}
+	.tip .choice-hint {
+		margin: 5px 0 0;
+		font-style: italic;
 	}
 
-	/* multi-choice selector picker */
-	.choices-panel {
+	/* at-node choice menu (game-style popover) */
+	.node-menu {
 		position: absolute;
-		top: 12px;
-		right: 12px;
-		background: rgba(15, 15, 15, 0.9);
-		border: 1px solid #2a2a2a;
-		border-radius: 4px;
-		padding: 8px 10px;
-		font-size: 11px;
-		z-index: 12;
-		max-width: 280px;
-		max-height: 45%;
-		overflow-y: auto;
-	}
-	.choices-panel h3 {
-		font-size: 11px;
-		margin: 0 0 6px;
-		color: #8a8d97;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-	}
-	.choices-panel .crow {
+		transform: translate(14px, -50%);
+		z-index: 30;
 		display: flex;
-		align-items: center;
-		gap: 8px;
-		margin: 4px 0;
+		flex-direction: column;
+		min-width: 150px;
+		max-width: 280px;
+		background: rgba(12, 12, 12, 0.98);
+		border: 1px solid #3a3a3a;
+		border-radius: 5px;
+		padding: 4px;
+		box-shadow: 0 6px 22px rgba(0, 0, 0, 0.75);
 	}
-	.choices-panel .cname {
-		flex: 1;
-		color: #c9aa45;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		max-width: 110px;
-	}
-	.choices-panel .cselect {
-		flex: 1;
-		min-width: 0;
-		background: #0d0d0d;
-		color: #d8dae0;
-		border: 1px solid #2a2a2a;
+	.node-menu .mi {
+		text-align: left;
+		background: transparent;
+		border: 0;
 		border-radius: 3px;
-		padding: 2px 4px;
-		font-size: 11px;
+		color: #d8dae0;
+		padding: 5px 8px;
+		font-size: 12px;
+		line-height: 1.3;
+		cursor: pointer;
 	}
-	.choices-panel .cselect.unset {
-		border-color: #6b5a1d;
-		color: #f0c850;
+	.node-menu .mi:hover {
+		background: #1f2937;
+		color: #fff;
 	}
-	.choices-panel .cselect:disabled {
-		opacity: 0.7;
+	.node-menu .mi.sel {
+		color: #5ef08f;
+		font-weight: 600;
+	}
+	.node-menu .mi.unalloc {
+		color: #e06a6a;
+		border-bottom: 1px solid #2a2a2a;
+		margin-bottom: 3px;
+		padding-bottom: 6px;
+		border-radius: 0;
+	}
+	.node-menu .mi.unalloc:hover {
+		background: #2a1414;
+		color: #ff8a8a;
 	}
 </style>

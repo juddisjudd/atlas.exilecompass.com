@@ -16,10 +16,29 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dataUsRaw = readFileSync(join(root, 'data/data_us.json'), 'utf8');
 const dataUs = JSON.parse(dataUsRaw);
 const atlas = JSON.parse(readFileSync(join(root, 'data/Atlas.json'), 'utf8'));
-// Multi-choice selector support: variant option labels (id -> text) and the
-// hand-curated map of selector dummy-stat id -> ordered option stat ids.
-const variantLabels = JSON.parse(readFileSync(join(root, 'data/atlas_variant_labels.json'), 'utf8'));
+// Multi-choice selector support: option templates (id -> condition lines) and
+// the hand-curated map of selector dummy-stat id -> ordered options. An option
+// is either a bare stat id (value-less; placeholders kept) or { id, v } where v
+// is a number (or [n,n] for two-value templates).
+const optionTemplates = JSON.parse(readFileSync(join(root, 'data/atlas_variant_labels.json'), 'utf8'));
 const selectorOptions = JSON.parse(readFileSync(join(root, 'data/selector-options.json'), 'utf8'));
+
+// Render one option to display text: pick the condition line matching the value
+// sign (increased vs reduced), then substitute {0}/{1} with the magnitudes. With
+// no value, the first line is returned verbatim (placeholders intact -> UI strips).
+function renderOption(id, v) {
+	const lines = optionTemplates[id];
+	if (!lines || !lines.length) return id;
+	const vals = v == null ? null : Array.isArray(v) ? v : [v];
+	let line = lines[0];
+	if (vals && lines.length > 1) {
+		const x = vals[0];
+		line = lines.find((L) => (L.min == null || x >= L.min) && (L.max == null || x <= L.max)) ?? lines[0];
+	}
+	let t = line.t;
+	if (vals) vals.forEach((val, i) => (t = t.split(`{${i}}`).join(String(Math.abs(val)))));
+	return t;
+}
 
 const { orbitRadii, skillsPerOrbit } = dataUs.constants;
 const groups = dataUs.groups;
@@ -34,7 +53,11 @@ function choicesFor(hash) {
 	if (!dummyId) return null;
 	const opts = selectorOptions[dummyId];
 	if (!opts) return null;
-	return opts.map((id) => ({ id, label: variantLabels[id] ?? id }));
+	return opts.map((opt) => {
+		const id = typeof opt === 'string' ? opt : opt.id;
+		const v = typeof opt === 'string' ? null : (opt.v ?? null);
+		return { id, label: renderOption(id, v) };
+	});
 }
 
 const TWO_PI = Math.PI * 2;

@@ -1,96 +1,1033 @@
 {
-"dummy_display_abyss_faction_random": "Any Faction",
-"dummy_display_atlas_multichoice_no_bias": "No Change",
-"dummy_display_breach_breachstone_extra_modifier": "Add a Modifier to one revealed Map",
-"dummy_display_breach_extra_breachstone_use_enabled": "Consume an additional Breachstone to add Modifiers to all revealed Maps",
-"dummy_display_strongbox_no_attribute_replacements": "No additional Prefix Modifiers",
-"map_abyss_eye_drop_chance_+%": "Abyssal Eyes",
-"map_abyss_faction_always_amanamu": "Amanamu",
-"map_abyss_faction_always_kurgal": "Kurgal",
-"map_abyss_faction_always_ulaman": "Ulaman",
-"map_abyss_lineage_support_drop_chance_+%": "Lineage Supports",
-"map_abyss_omen_drop_chance_+%": "Omens",
-"map_additional_rare_in_rare_pack_chance_+%": "Rare Monster Packs in your Maps have a {0}% increased chance to have an Additional Rare Monster",
-"map_breach_fruit_amulet_chance_+%": "Ornate Wombgifts",
-"map_breach_fruit_belt_chance_+%": "Banded Wombgifts",
-"map_breach_fruit_currency_chance_+%": "Lavish Wombgifts",
-"map_breach_fruit_ring_chance_+%": "Signet Wombgifts",
-"map_breach_hive_number_of_skills_+%": "{0}% increased number of skills created",
-"map_breach_hive_skill_damage_+%": "{0}% increased damage of skills created",
-"map_city_ezomyte_also_count_as_grass": "Grass",
-"map_city_ezomyte_also_count_as_swamp": "Swamp",
-"map_city_faridun_also_count_as_desert": "Desert",
-"map_city_faridun_also_count_as_mountain": "Mountain",
-"map_city_vaal_also_count_as_forest": "Forest",
-"map_city_vaal_also_count_as_water": "Water",
-"map_covetous_shrine_chance_+%": "Seeking Shrines",
-"map_desert_currency_alchemy_as_regal_chance_%": "{0}% chance Alchemy Orbs drop as base Regal Orbs",
-"map_desert_currency_regal_as_alchemy_chance_%": "{0}% chance base Regal Orbs drop as Alchemy Orbs",
-"map_desert_monster_potency_+%": "{0}% increased Effectiveness of Monsters",
-"map_enlightening_shrine_chance_+%": "Enlightening Shrines",
-"map_essence_ally_chance_+%": "Greater Essence of Command and Perfect Essence of Command",
-"map_essence_armour_evasion_energy_shield_chance_+%": "Greater Essence of Enhancement and Perfect Essence of Enhancement",
-"map_essence_attack_chance_+%": "Greater Essence of Battle and Perfect Essence of Battle",
-"map_essence_attribute_chance_+%": "Greater Essence of the Infinite and Perfect Essence of the Infinite",
-"map_essence_caster_chance_+%": "Greater Essence of Sorcery and Perfect Essence of Sorcery",
-"map_essence_chaos_chance_+%": "Greater Essence of Ruin and Perfect Essence of Ruin",
-"map_essence_cold_chance_+%": "Greater/Perfect Essence of Ice and Greater/Perfect Essence of Thawing",
-"map_essence_critical_chance_+%": "Greater Essence of Seeking and Perfect Essence of Seeking",
-"map_essence_fire_chance_+%": "Greater/Perfect Essence of Flames and Greater/Perfect Essence of Insulation",
-"map_essence_life_chance_+%": "Greater Essence of the Body and Perfect Essence of the Body",
-"map_essence_lightning_chance_+%": "Greater/Perfect Essence of Electricity and Greater/Perfect Essence of Grounding",
-"map_essence_mana_chance_+%": "Greater Essence of the Mind and Perfect Essence of the Mind",
-"map_essence_physical_chance_+%": "Greater Essence of Abrasion and Perfect Essence of Abrasion",
-"map_essence_rarity_chance_+%": "Greater Essence of Opulence and Perfect Essence of Opulence",
-"map_essence_speed_chance_+%": "Greater/Perfect Essence of Haste and Greater/Perfect Essence of Alacrity",
-"map_forest_lineage_support_drop_chance_+%": "{0}% increased chance to find Lineage Supports",
-"map_forest_number_of_rare_packs_+%": "{0}% increased Rare Monsters",
-"map_forest_uncut_gem_drop_chance_+%": "{0}% increased chance to find Uncut Gems",
-"map_gloom_shrine_chance_+%": "Gloom Shrines",
-"map_grass_currency_upgrade_basic_to_greater_chance_%": "{0}% chance Basic Currencies are upgraded to Greater Currencies",
-"map_grass_currency_upgrade_greater_to_perfect_chance_%": "{0}% chance Greater Currencies are upgraded to Perfect Currencies",
-"map_grass_monster_potency_+%": "{0}% increased Effectiveness of Monsters",
-"map_item_drop_rarity_+%": "{0}% increased Rarity of Items found",
-"map_magic_monster_additional_modifier_chance_%": "Magic Monster Packs have {0}% chance to have an additional Modifier",
-"map_magic_monster_dropped_item_rarity_+%": "{0}% increased Rarity of Items Dropped by Magic Monsters",
-"map_magic_monster_potency_+%": "{0}% increased Effectiveness of Magic Monsters in your Maps",
-"map_monolith_chance_+%": "Essences",
-"map_monster_potency_+%": "{0}% increased Effectiveness of Monsters in your Maps",
-"map_mountain_item_drop_rarity_+%": "{0}% increased Rarity of Items found",
-"map_mountain_rune_drop_chance_+%": "{0}% increased Quantity of Runes found",
-"map_mountain_tower_augment_quantity_+%": "{0}% increased Quantity of Tablets found",
-"map_number_of_magic_packs_+%": "{0}% increased Magic Monsters",
-"map_pack_size_+%": "{0}% increased Pack Size",
-"map_primal_spirit_chance_+%": "Primal Spirits",
-"map_rare_monster_dropped_item_rarity_+%": "{0}% increased Rarity of Items Dropped by Rare Monsters",
-"map_rare_monster_modifiers_chance_%": "Rare Monsters have {0}% increased chance of Monster Modifiers",
-"map_rare_monster_potency_+%": "{0}% increased Effectiveness of Rare Monsters in your Maps",
-"map_rogue_exile_chance_+%": "Rogue Exiles",
-"map_rogue_exile_dexterity_chance_+%": "Dexterity",
-"map_rogue_exile_intelligence_chance_+%": "Intelligence",
-"map_rogue_exile_strength_chance_+%": "Strength",
-"map_rogue_exile_unique_armour_chance_+%": "Armour",
-"map_rogue_exile_unique_jewellery_chance_+%": "Jewellery",
-"map_rogue_exile_unique_weapon_chance_+%": "Weapons",
-"map_shrine_chance_+%": "Shrines",
-"map_stone_circle_chance_+%": "Summoning Circles",
-"map_strongbox_can_roll_attribute_replacements_dexterity": "Dexterity",
-"map_strongbox_can_roll_attribute_replacements_intelligence": "Intelligence",
-"map_strongbox_can_roll_attribute_replacements_strength": "Strength",
-"map_strongbox_chance_+%": "Strongboxes",
-"map_swamp_currency_chaos_as_exalted_chance_%": "{0}% chance Chaos Orbs drop as Exalted Orbs",
-"map_swamp_currency_exalted_as_chaos_chance_%": "{0}% chance Exalted Orbs drop as Chaos Orbs",
-"map_swamp_pack_size_+%": "{0}% increased Pack Size",
-"map_tormented_spirit_chance_+%": "Azmeri Spirits",
-"map_vivid_spirit_chance_+%": "Vivid Spirits",
-"map_water_chest_extra_currency_chance_%": "Chests contain {0}% increased Currency",
-"map_water_chest_extra_jewellery_chance_%": "Chests contain {0}% increased Jewellery",
-"map_water_gold_+%": "{0}% increased Gold found",
-"map_wild_spirit_chance_+%": "Wild Spirits",
-"maps_with_powerful_bosses_additional_essence_+": "An additional Essence",
-"maps_with_powerful_bosses_additional_rogue_exile_+": "An additional Rogue Exile",
-"maps_with_powerful_bosses_additional_shrine_+": "An additional Shrine",
-"maps_with_powerful_bosses_additional_spirit_+": "An additional Azmeri Spirit",
-"maps_with_powerful_bosses_additional_stone_circle_+": "A Summoning Circle",
-"maps_with_powerful_bosses_additional_strongbox_+": "An additional Strongbox"
+"dummy_display_abyss_faction_random": [
+{
+"min": null,
+"max": null,
+"t": "Any Faction"
+}
+],
+"dummy_display_atlas_multichoice_no_bias": [
+{
+"min": null,
+"max": null,
+"t": "No Change"
+}
+],
+"dummy_display_breach_breachstone_extra_modifier": [
+{
+"min": null,
+"max": null,
+"t": "Add a Modifier to one revealed Map"
+}
+],
+"dummy_display_breach_extra_breachstone_use_enabled": [
+{
+"min": null,
+"max": null,
+"t": "Consume an additional Breachstone to add Modifiers to all revealed Maps"
+}
+],
+"dummy_display_strongbox_no_attribute_replacements": [
+{
+"min": null,
+"max": null,
+"t": "No additional Prefix Modifiers"
+}
+],
+"map_abyss_%_chance_for_1_additional_pit_with_overflow": [
+{
+"min": null,
+"max": null,
+"t": "Abysses have a {0}% chance to contain an additional Abyss"
+}
+],
+"map_abyss_eye_drop_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Abyssal Eyes"
+}
+],
+"map_abyss_faction_always_amanamu": [
+{
+"min": null,
+"max": null,
+"t": "Amanamu"
+}
+],
+"map_abyss_faction_always_kurgal": [
+{
+"min": null,
+"max": null,
+"t": "Kurgal"
+}
+],
+"map_abyss_faction_always_ulaman": [
+{
+"min": null,
+"max": null,
+"t": "Ulaman"
+}
+],
+"map_abyss_lineage_support_drop_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Lineage Supports"
+}
+],
+"map_abyss_monster_potency_+%_per_chasm_closed": [
+{
+"min": 1,
+"max": null,
+"t": "Abyssal Monsters have {0}% increased Effectiveness for each closed Pit, up to 100%"
+},
+{
+"min": null,
+"max": -1,
+"t": "Abyssal Monsters have {0}% increased Effectiveness for each closed Pit"
+}
+],
+"map_abyss_omen_drop_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Omens"
+}
+],
+"map_abyss_pits_spread_apart": [
+{
+"min": 1,
+"max": 1,
+"t": "Abyss Pits are scattered throughout Areas with Abysses"
+}
+],
+"map_additional_rare_in_rare_pack_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Rare Monster Packs in your Maps have a {0}% increased chance to have an Additional Rare Monster"
+}
+],
+"map_breach_fruit_amulet_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Ornate Wombgifts"
+}
+],
+"map_breach_fruit_belt_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Banded Wombgifts"
+}
+],
+"map_breach_fruit_currency_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Lavish Wombgifts"
+}
+],
+"map_breach_fruit_ring_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Signet Wombgifts"
+}
+],
+"map_breach_hive_number_of_skills_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased number of skills created"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced number of skills created"
+}
+],
+"map_breach_hive_skill_damage_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased damage of skills created"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced damage of skills created"
+}
+],
+"map_breach_monster_potency_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Effectiveness of Breach Monsters"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Effectiveness of Breach Monsters"
+}
+],
+"map_breach_monster_quantity_+%": [
+{
+"min": 1,
+"max": null,
+"t": "Breaches have {0}% increased Pack Size"
+},
+{
+"min": null,
+"max": -1,
+"t": "Breaches have {0}% reduced Pack Size"
+}
+],
+"map_breach_rare_monster_potency_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Effectiveness of Rare Breach Monsters"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Effectiveness of Rare Breach Monsters"
+}
+],
+"map_city_ezomyte_also_count_as_grass": [
+{
+"min": null,
+"max": null,
+"t": "Grass"
+}
+],
+"map_city_ezomyte_also_count_as_swamp": [
+{
+"min": null,
+"max": null,
+"t": "Swamp"
+}
+],
+"map_city_faridun_also_count_as_desert": [
+{
+"min": null,
+"max": null,
+"t": "Desert"
+}
+],
+"map_city_faridun_also_count_as_mountain": [
+{
+"min": null,
+"max": null,
+"t": "Mountain"
+}
+],
+"map_city_vaal_also_count_as_forest": [
+{
+"min": null,
+"max": null,
+"t": "Forest"
+}
+],
+"map_city_vaal_also_count_as_water": [
+{
+"min": null,
+"max": null,
+"t": "Water"
+}
+],
+"map_covetous_shrine_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Seeking Shrines"
+}
+],
+"map_delirium_fog_bank_branch_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Delirium Fog spread to Maps has {0}% increased chance to spread to an additional Map"
+}
+],
+"map_delirium_fog_bank_length_+": [
+{
+"min": null,
+"max": null,
+"t": "Delirium Fog spreads to +{0} Maps"
+}
+],
+"map_delirium_fog_bank_second_branch_chance_%": [
+{
+"min": null,
+"max": null,
+"t": "Delirium Fog spread to additional Maps has {0}% chance to spread to each connected Map"
+}
+],
+"map_desert_currency_alchemy_as_regal_chance_%": [
+{
+"min": null,
+"max": null,
+"t": "{0}% chance Alchemy Orbs drop as base Regal Orbs"
+}
+],
+"map_desert_currency_regal_as_alchemy_chance_%": [
+{
+"min": null,
+"max": null,
+"t": "{0}% chance base Regal Orbs drop as Alchemy Orbs"
+}
+],
+"map_desert_monster_potency_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Effectiveness of Monsters"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Effectiveness of Monsters"
+}
+],
+"map_enlightening_shrine_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Enlightening Shrines"
+}
+],
+"map_essence_additional_double_corrupt": [
+{
+"min": null,
+"max": null,
+"t": "Corrupting Essence Monsters Corrupts them an additional time"
+}
+],
+"map_essence_ally_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater Essence of Command and Perfect Essence of Command"
+}
+],
+"map_essence_armour_evasion_energy_shield_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater Essence of Enhancement and Perfect Essence of Enhancement"
+}
+],
+"map_essence_attack_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater Essence of Battle and Perfect Essence of Battle"
+}
+],
+"map_essence_attribute_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater Essence of the Infinite and Perfect Essence of the Infinite"
+}
+],
+"map_essence_caster_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater Essence of Sorcery and Perfect Essence of Sorcery"
+}
+],
+"map_essence_chaos_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater Essence of Ruin and Perfect Essence of Ruin"
+}
+],
+"map_essence_cold_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater/Perfect Essence of Ice and Greater/Perfect Essence of Thawing"
+}
+],
+"map_essence_corruption_cannot_release_monsters": [
+{
+"min": null,
+"max": null,
+"t": "Corrupting Essence Monsters cannot immediately release them and will always change their Essences"
+}
+],
+"map_essence_critical_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater Essence of Seeking and Perfect Essence of Seeking"
+}
+],
+"map_essence_duplicate_monster_if_corrupted_chance_%": [
+{
+"min": null,
+"max": null,
+"t": "Corrupted Essence Monsters have {0}% chance to be Duplicated when released"
+}
+],
+"map_essence_fire_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater/Perfect Essence of Flames and Greater/Perfect Essence of Insulation"
+}
+],
+"map_essence_immediate_kill_corrupted_rare": [
+{
+"min": null,
+"max": null,
+"t": "When Corrupting Rare Essence Monsters immediately releases them they are instead immediately killed"
+}
+],
+"map_essence_life_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater Essence of the Body and Perfect Essence of the Body"
+}
+],
+"map_essence_lightning_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater/Perfect Essence of Electricity and Greater/Perfect Essence of Grounding"
+}
+],
+"map_essence_mana_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater Essence of the Mind and Perfect Essence of the Mind"
+}
+],
+"map_essence_physical_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater Essence of Abrasion and Perfect Essence of Abrasion"
+}
+],
+"map_essence_rarity_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater Essence of Opulence and Perfect Essence of Opulence"
+}
+],
+"map_essence_speed_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Greater/Perfect Essence of Haste and Greater/Perfect Essence of Alacrity"
+}
+],
+"map_forest_lineage_support_drop_chance_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased chance to find Lineage Supports"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced chance to find Lineage Supports"
+}
+],
+"map_forest_number_of_rare_packs_+%": [
+{
+"min": null,
+"max": null,
+"t": "{0}% increased Rare Monsters"
+}
+],
+"map_forest_uncut_gem_drop_chance_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased chance to find Uncut Gems"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced chance to find Uncut Gems"
+}
+],
+"map_gloom_shrine_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Gloom Shrines"
+}
+],
+"map_grass_currency_upgrade_basic_to_greater_chance_%": [
+{
+"min": null,
+"max": null,
+"t": "{0}% chance Basic Currencies are upgraded to Greater Currencies"
+}
+],
+"map_grass_currency_upgrade_greater_to_perfect_chance_%": [
+{
+"min": null,
+"max": null,
+"t": "{0}% chance Greater Currencies are upgraded to Perfect Currencies"
+}
+],
+"map_grass_monster_potency_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Effectiveness of Monsters"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Effectiveness of Monsters"
+}
+],
+"map_item_drop_rarity_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Rarity of Items found"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Rarity of Items found"
+}
+],
+"map_magic_monster_additional_modifier_chance_%": [
+{
+"min": null,
+"max": null,
+"t": "Magic Monster Packs have {0}% chance to have an additional Modifier"
+}
+],
+"map_magic_monster_dropped_item_rarity_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Rarity of Items Dropped by Magic Monsters"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Rarity of Items Dropped by Magic Monsters"
+}
+],
+"map_magic_monster_potency_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Effectiveness of Magic Monsters in your Maps"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Effectiveness of Magic Monsters in your Maps"
+}
+],
+"map_monolith_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Essences"
+}
+],
+"map_monster_potency_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Effectiveness of Monsters in your Maps"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Effectiveness of Monsters in your Maps"
+}
+],
+"map_mountain_item_drop_rarity_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Rarity of Items found"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Rarity of Items found"
+}
+],
+"map_mountain_rune_drop_chance_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Quantity of Runes found"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Quantity of Runes found"
+}
+],
+"map_mountain_tower_augment_quantity_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Quantity of Tablets found"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Quantity of Tablets found"
+}
+],
+"map_number_of_magic_packs_+%": [
+{
+"min": null,
+"max": null,
+"t": "{0}% increased Magic Monsters"
+}
+],
+"map_pack_size_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Pack Size"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Pack Size"
+}
+],
+"map_primal_spirit_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Primal Spirits"
+}
+],
+"map_rare_monster_dropped_item_rarity_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Rarity of Items Dropped by Rare Monsters"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Rarity of Items Dropped by Rare Monsters"
+}
+],
+"map_rare_monster_modifiers_chance_%": [
+{
+"min": null,
+"max": null,
+"t": "Rare Monsters have {0}% increased chance of Monster Modifiers"
+}
+],
+"map_rare_monster_potency_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Effectiveness of Rare Monsters in your Maps"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Effectiveness of Rare Monsters in your Maps"
+}
+],
+"map_ritual_daemon_damage_+%": [
+{
+"min": 1,
+"max": null,
+"t": "Skills from Ritual Altars deal {0}% increased Damage"
+},
+{
+"min": null,
+"max": -1,
+"t": "Skills from Ritual Altars deal {0}% reduced Damage"
+}
+],
+"map_ritual_monster_tankiness_+%_for_each_time_revived": [
+{
+"min": null,
+"max": null,
+"t": "Revived monsters from Rituals have {0}% increased Toughness and {1}% increased Damage for each time they have been Revived"
+}
+],
+"map_ritual_offered_rewards_amount_+%": [
+{
+"min": 1,
+"max": null,
+"t": "Ritual Altars offer {0}% increased number of Favours"
+},
+{
+"min": null,
+"max": -1,
+"t": "Ritual Altars offer {0}% reduced number of Favours"
+}
+],
+"map_ritual_revive_penalty_+%": [
+{
+"min": 1,
+"max": null,
+"t": "Revived monsters from Rituals have {0}% increased penalty to Tribute granted"
+},
+{
+"min": null,
+"max": -1,
+"t": "Revived monsters from Rituals have {0}% reduced penalty to Tribute granted"
+}
+],
+"map_ritual_type_contaminated_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Contaminated"
+}
+],
+"map_ritual_type_infested_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Infested"
+}
+],
+"map_ritual_type_sapping_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Sapping"
+}
+],
+"map_ritual_type_smothered_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Smothered"
+}
+],
+"map_ritual_type_tainted_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Tainted"
+}
+],
+"map_rogue_exile_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Rogue Exiles"
+}
+],
+"map_rogue_exile_dexterity_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Dexterity"
+}
+],
+"map_rogue_exile_intelligence_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Intelligence"
+}
+],
+"map_rogue_exile_strength_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Strength"
+}
+],
+"map_rogue_exile_unique_armour_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Armour"
+}
+],
+"map_rogue_exile_unique_jewellery_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Jewellery"
+}
+],
+"map_rogue_exile_unique_weapon_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Weapons"
+}
+],
+"map_sacred_spirit_chance_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased chance for Azmeri Spirits in your Maps to be Sacred Spirits"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced chance for Azmeri Spirits in your Maps to be Sacred Spirits"
+}
+],
+"map_shrine_buff_refresh_on_entering_boss_arena_chance_%": [
+{
+"min": null,
+"max": null,
+"t": "{0}% chance Shrine Buffs are reapplied when entering the Boss arena"
+}
+],
+"map_shrine_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Shrines"
+}
+],
+"map_shrine_chance_to_instead_apply_boss_buff_%": [
+{
+"min": null,
+"max": null,
+"t": "{0}% chance Shrine Buffs are instead applied to the Boss when activated, granting an additional reward"
+}
+],
+"map_stone_circle_bosses_are_powerful": [
+{
+"min": null,
+"max": null,
+"t": "Summoning Circle Bosses are Powerful"
+}
+],
+"map_stone_circle_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Summoning Circles"
+}
+],
+"map_stone_circle_spawns_X_packs_of_monsters": [
+{
+"min": 1,
+"max": 1,
+"t": "Summoning Circle Runes are guarded by {0} Pack of Random Monsters"
+},
+{
+"min": null,
+"max": null,
+"t": "Summoning Circle Runes are guarded by {0} Packs of Random Monsters"
+}
+],
+"map_strongbox_can_roll_attribute_replacements_dexterity": [
+{
+"min": null,
+"max": null,
+"t": "Dexterity"
+}
+],
+"map_strongbox_can_roll_attribute_replacements_intelligence": [
+{
+"min": null,
+"max": null,
+"t": "Intelligence"
+}
+],
+"map_strongbox_can_roll_attribute_replacements_strength": [
+{
+"min": null,
+"max": null,
+"t": "Strength"
+}
+],
+"map_strongbox_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Strongboxes"
+}
+],
+"map_swamp_currency_chaos_as_exalted_chance_%": [
+{
+"min": null,
+"max": null,
+"t": "{0}% chance Chaos Orbs drop as Exalted Orbs"
+}
+],
+"map_swamp_currency_exalted_as_chaos_chance_%": [
+{
+"min": null,
+"max": null,
+"t": "{0}% chance Exalted Orbs drop as Chaos Orbs"
+}
+],
+"map_swamp_pack_size_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Pack Size"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Pack Size"
+}
+],
+"map_tormented_spirit_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Azmeri Spirits"
+}
+],
+"map_tormented_spirits_sacred_spirit_possess_with_other_spirit": [
+{
+"min": null,
+"max": null,
+"t": "When a Monster is Possessed by a Sacred Spirit it is also Possessed by another random Spirit"
+}
+],
+"map_tormented_spirits_touched_+%_power_when_slain": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Azmeri Spirit empowerment when defeating Spirit-Influenced Monsters"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Azmeri Spirit empowerment when defeating Spirit-Influenced Monsters"
+}
+],
+"map_vivid_spirit_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Vivid Spirits"
+}
+],
+"map_water_chest_extra_currency_chance_%": [
+{
+"min": null,
+"max": null,
+"t": "Chests contain {0}% increased Currency"
+}
+],
+"map_water_chest_extra_jewellery_chance_%": [
+{
+"min": null,
+"max": null,
+"t": "Chests contain {0}% increased Jewellery"
+}
+],
+"map_water_gold_+%": [
+{
+"min": 1,
+"max": null,
+"t": "{0}% increased Gold found"
+},
+{
+"min": null,
+"max": -1,
+"t": "{0}% reduced Gold found"
+}
+],
+"map_wild_spirit_chance_+%": [
+{
+"min": null,
+"max": null,
+"t": "Wild Spirits"
+}
+],
+"maps_with_powerful_bosses_additional_essence_+": [
+{
+"min": 1,
+"max": 1,
+"t": "An additional Essence"
+},
+{
+"min": null,
+"max": null,
+"t": "{0} additional Essences"
+}
+],
+"maps_with_powerful_bosses_additional_rogue_exile_+": [
+{
+"min": 1,
+"max": 1,
+"t": "An additional Rogue Exile"
+},
+{
+"min": null,
+"max": null,
+"t": "{0} additional Rogue Exiles"
+}
+],
+"maps_with_powerful_bosses_additional_shrine_+": [
+{
+"min": 1,
+"max": 1,
+"t": "An additional Shrine"
+},
+{
+"min": null,
+"max": null,
+"t": "{0} additional Shrines"
+}
+],
+"maps_with_powerful_bosses_additional_spirit_+": [
+{
+"min": 1,
+"max": 1,
+"t": "An additional Azmeri Spirit"
+},
+{
+"min": null,
+"max": null,
+"t": "{0} additional Azmeri Spirits"
+}
+],
+"maps_with_powerful_bosses_additional_stone_circle_+": [
+{
+"min": 1,
+"max": 1,
+"t": "A Summoning Circle"
+},
+{
+"min": null,
+"max": null,
+"t": "A Summoning Circle {0} Reactivation Runes"
+}
+],
+"maps_with_powerful_bosses_additional_strongbox_+": [
+{
+"min": 1,
+"max": 1,
+"t": "An additional Strongbox"
+},
+{
+"min": null,
+"max": null,
+"t": "{0} additional Strongboxes"
+}
+]
 }

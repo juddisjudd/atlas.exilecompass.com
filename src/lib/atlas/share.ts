@@ -9,7 +9,7 @@
 //   u16 choiceCount, then per choice: u16 node hash, u8 option index
 // The option is stored as its index within the node's baked `c` list (1 byte);
 // the treeVersion guard ensures that index still resolves to the same option.
-import { tree, nodeByHash } from './tree-data';
+import { tree } from './tree-data';
 import type { Milestone } from './planner.svelte';
 
 export const SHARE_VERSION = 2;
@@ -20,14 +20,14 @@ export interface Plan {
 	steps: number[];
 	milestones: Milestone[];
 	title: string;
-	choices: Record<number, string>; // node hash -> chosen option id
+	choices: Record<number, number>; // node hash -> chosen option index
 }
 
 export interface PlanInput {
 	steps: number[];
 	milestones: Milestone[];
 	title?: string;
-	choices?: Record<number, string>; // node hash -> chosen option id
+	choices?: Record<number, number>; // node hash -> chosen option index
 }
 
 const encoder = new TextEncoder();
@@ -76,15 +76,10 @@ export function encodePlan(plan: PlanInput): string {
 	}
 	str(plan.title ?? '');
 	// v2: choices, encoded as (hash, option index) pairs
-	const choiceEntries: [number, number][] = [];
-	for (const [k, id] of Object.entries(plan.choices ?? {})) {
-		const h = Number(k);
-		const idx = nodeByHash.get(h)?.c?.findIndex((o) => o.id === id) ?? -1;
-		if (idx >= 0) choiceEntries.push([h, idx]);
-	}
+	const choiceEntries = Object.entries(plan.choices ?? {}).filter(([, idx]) => idx >= 0);
 	u16(choiceEntries.length);
-	for (const [h, idx] of choiceEntries) {
-		u16(h & 0xffff);
+	for (const [k, idx] of choiceEntries) {
+		u16(Number(k) & 0xffff);
 		bytes.push(idx & 0xff);
 	}
 	return bytesToBase64Url(Uint8Array.from(bytes));
@@ -118,14 +113,12 @@ export function decodePlan(code: string): Plan | null {
 			milestones.push({ at, label });
 		}
 		const title = str();
-		const choices: Record<number, string> = {};
+		const choices: Record<number, number> = {};
 		if (v >= 2 && p < bytes.length) {
 			const cc = u16();
 			for (let i = 0; i < cc; i++) {
 				const h = u16();
-				const idx = u8();
-				const id = nodeByHash.get(h)?.c?.[idx]?.id;
-				if (id) choices[h] = id;
+				choices[h] = u8();
 			}
 		}
 		return { v, treeVersion, steps, milestones, title, choices };

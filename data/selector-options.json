@@ -1,5 +1,5 @@
 {
-  "_comment": "Hand-curated map: selector node dummy_* stat id -> ordered list of option stat ids. Option labels are resolved from data/atlas_variant_labels.json at bake time. Keyed by dummy stat id so nodes sharing a selector (e.g. Crystalline Patterns + Essence Dowsing; Overlord's Influence + Domain) map identically. Selectors whose options were not present in the game export are intentionally absent (no picker).",
+  "_comment": "Hand-curated map: selector node dummy_* stat id -> ordered list of options. An option is either a bare stat id (value-less; the {0} placeholder is stripped in the UI) or { id, v } where v is the magnitude (number, or [n,n] for two-value templates; negative v selects the 'reduced' wording). Labels are resolved from data/atlas_variant_labels.json at bake time. Keyed by dummy stat id so nodes sharing a selector (e.g. Crystalline Patterns + Essence Dowsing; Overlord's Influence + Domain) map identically. Selection identity is the option's index in this list, so the same stat id may appear twice with different values (e.g. Shape the Chains pack size +15 / -20). Selectors whose options are not present in the export are intentionally absent (no picker).",
 
   "dummy_display_mountain_mastery_choice": [
     "map_mountain_item_drop_rarity_+%",
@@ -130,10 +130,10 @@
   ],
 
   "dummy_display_rare_monster_difficulty_selector": [
-    "map_rare_monster_potency_+%",
-    "map_rare_monster_modifiers_chance_%",
-    "map_additional_rare_in_rare_pack_chance_+%",
-    "map_rare_monster_dropped_item_rarity_+%"
+    { "id": "map_rare_monster_potency_+%", "v": 15 },
+    { "id": "map_rare_monster_modifiers_chance_%", "v": 30 },
+    { "id": "map_additional_rare_in_rare_pack_chance_+%", "v": 50 },
+    { "id": "map_rare_monster_dropped_item_rarity_+%", "v": 10 }
   ],
   "dummy_display_magic_pack_difficulty_selector": [
     "map_magic_monster_potency_+%",
@@ -145,6 +145,56 @@
     "map_pack_size_+%",
     "map_monster_potency_+%",
     "map_item_drop_rarity_+%"
+  ],
+
+  "dummy_display_essence_corruption_selector": [
+    "map_essence_corruption_cannot_release_monsters",
+    { "id": "map_essence_duplicate_monster_if_corrupted_chance_%", "v": 25 },
+    "map_essence_additional_double_corrupt",
+    "map_essence_immediate_kill_corrupted_rare"
+  ],
+  "dummy_display_delirium_adjust_fog_spread": [
+    { "id": "map_delirium_fog_bank_branch_chance_+%", "v": 50 },
+    { "id": "map_delirium_fog_bank_second_branch_chance_%", "v": 25 },
+    { "id": "map_delirium_fog_bank_length_+", "v": 4 }
+  ],
+  "dummy_display_shrine_boss_interaction": [
+    { "id": "map_shrine_buff_refresh_on_entering_boss_arena_chance_%", "v": 25 },
+    { "id": "map_shrine_chance_to_instead_apply_boss_buff_%", "v": 25 }
+  ],
+  "dummy_display_abyss_pit_adjustments": [
+    "map_abyss_pits_spread_apart",
+    { "id": "map_abyss_monster_potency_+%_per_chasm_closed", "v": 10 },
+    { "id": "map_abyss_%_chance_for_1_additional_pit_with_overflow", "v": 20 }
+  ],
+  "dummy_display_stone_circle_difficulty_selector": [
+    "map_stone_circle_bosses_are_powerful",
+    { "id": "map_stone_circle_spawns_X_packs_of_monsters", "v": 2 }
+  ],
+  "dummy_display_breach_monster_bonus_selector": [
+    { "id": "map_breach_rare_monster_potency_+%", "v": 30 },
+    { "id": "map_breach_monster_quantity_+%", "v": -20 },
+    { "id": "map_breach_monster_potency_+%", "v": 20 },
+    { "id": "map_breach_monster_quantity_+%", "v": 15 }
+  ],
+  "dummy_display_azmeri_spirit_empowerment_selector": [
+    { "id": "map_sacred_spirit_chance_+%", "v": 25 },
+    "map_tormented_spirits_sacred_spirit_possess_with_other_spirit",
+    { "id": "map_tormented_spirits_touched_+%_power_when_slain", "v": 50 }
+  ],
+  "dummy_ritual_rune_type_selector": [
+    "map_ritual_type_contaminated_chance_+%",
+    "map_ritual_type_infested_chance_+%",
+    "map_ritual_type_tainted_chance_+%",
+    "map_ritual_type_smothered_chance_+%",
+    "map_ritual_type_sapping_chance_+%"
+  ],
+  "dummy_display_ritual_difficulty_selector": [
+    { "id": "map_ritual_revive_penalty_+%", "v": -5 },
+    { "id": "map_ritual_daemon_damage_+%", "v": 50 },
+    { "id": "map_ritual_offered_rewards_amount_+%", "v": 10 },
+    { "id": "map_ritual_monster_tankiness_+%_for_each_time_revived", "v": [20, 10] },
+    { "id": "map_ritual_revive_penalty_+%", "v": -50 }
   ],
 
   "dummy_display_content_chances_selector": [

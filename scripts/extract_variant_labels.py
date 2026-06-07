@@ -1,17 +1,23 @@
 #!/usr/bin/env python3
 """
-Build data/atlas_variant_labels.json (option stat id -> English label), the
-label source consumed by scripts/bake.mjs for multi-choice selector options.
+Build data/atlas_variant_labels.json: option stat id -> condition-line templates,
+consumed by scripts/bake.mjs to render multi-choice selector option labels.
 
-Option labels come from two game stat-translation files:
-  - atlas_variant_stat_descriptions.json : short radial labels for biome/essence/
-    rogue/etc. selectors (e.g. "Amanamu", "Abyssal Eyes").
+Output shape, per id:
+    "<stat_id>": [ { "min": <int|null>, "max": <int|null>, "t": "<template>" }, ... ]
+where `t` keeps the {0}/{1} value placeholders. bake.mjs substitutes the values
+from data/selector-options.json (picking the line whose [min,max] the value falls
+in, so "increased" vs "reduced" renders correctly), or leaves the placeholders in
+for value-less options (the UI strips them).
+
+Labels come from two game stat-translation files:
+  - atlas_variant_stat_descriptions.json : short radial labels (biomes, essence,
+    rogue exiles, etc.)
   - atlas_stat_descriptions.json         : full-sentence stats used by the
-    "difficulty" selectors (e.g. Nemesis Rising's rare-monster options).
+    "difficulty"/content selectors (rare/magic monsters, ritual, breach, ...).
 
-Only ids actually referenced by data/selector-options.json are emitted, so the
-label file stays small. The variant file wins on id collisions (its labels are
-the menu-friendly form).
+Only ids referenced by data/selector-options.json are emitted, so the file stays
+small. The variant file wins on id collisions (its labels are menu-friendly).
 
 Usage:
   python scripts/extract_variant_labels.py <variant_desc.json> <atlas_desc.json> [out.json]
@@ -27,27 +33,37 @@ def clean(s):
     return _MARKUP.sub(r"\1", s).replace("\n", " ").strip()
 
 
-def labels_from(path):
-    """id -> cleaned first English string, for every entry in a desc file."""
+def lines_of(entry):
+    """Condition lines for one description entry: [{min,max,t}, ...]."""
+    out = []
+    for line in entry.get("English", []):
+        conds = line.get("condition") or [{}]
+        c = conds[0] if conds else {}
+        out.append({"min": c.get("min"), "max": c.get("max"), "t": clean(line.get("string", ""))})
+    return out
+
+
+def templates_from(path):
     out = {}
     with open(path, encoding="utf-8") as f:
         for e in json.load(f):
             if not (e.get("ids") and e.get("English")):
                 continue
-            text = clean(e["English"][0].get("string", ""))
+            ls = lines_of(e)
             for sid in e["ids"]:
-                out.setdefault(sid, text)
+                out.setdefault(sid, ls)
     return out
 
 
-def referenced_ids(selector_options_path):
-    with open(selector_options_path, encoding="utf-8") as f:
+def referenced_ids(path):
+    with open(path, encoding="utf-8") as f:
         data = json.load(f)
     ids = set()
     for key, opts in data.items():
         if key.startswith("_"):
             continue
-        ids.update(opts)
+        for opt in opts:
+            ids.add(opt if isinstance(opt, str) else opt["id"])
     return ids
 
 
@@ -57,7 +73,7 @@ def main():
     dst = sys.argv[3] if len(sys.argv) > 3 else "data/atlas_variant_labels.json"
 
     # atlas first, variant second so variant labels override on collision
-    merged = {**labels_from(atlas), **labels_from(variant)}
+    merged = {**templates_from(atlas), **templates_from(variant)}
     needed = referenced_ids("data/selector-options.json")
 
     out = {}
@@ -70,9 +86,9 @@ def main():
 
     with open(dst, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=0)
-    print(f"Wrote {dst}: {len(out)} labels for {len(needed)} referenced option ids")
+    print(f"Wrote {dst}: {len(out)} option templates for {len(needed)} referenced ids")
     if missing:
-        print(f"WARNING: {len(missing)} option ids have no label:")
+        print(f"WARNING: {len(missing)} option ids have no template:")
         for sid in missing:
             print(f"  - {sid}")
 
