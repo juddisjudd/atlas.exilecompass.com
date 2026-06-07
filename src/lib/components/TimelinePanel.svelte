@@ -1,18 +1,24 @@
 <script lang="ts">
 	import type { Planner } from '$lib/atlas/planner.svelte';
+	import { tree } from '$lib/atlas/tree-data';
 
 	let { planner, readonly = false }: { planner: Planner; readonly?: boolean } = $props();
 
 	let trackEl = $state<HTMLDivElement>();
 	let dragging = $state(false);
 
-	const pct = (n: number) => (planner.count ? (n / planner.count) * 100 : 0);
+	// The track spans the FULL tree, so a partial plan reads as partial. The tree
+	// is fully fillable, so "total points" is the number of allocatable nodes
+	// (every non-root node) — not the stale totalPoints cap in the data.
+	const ALLOCATABLE = tree.nodes.filter((n) => n.t !== 'root').length;
+	const total = $derived(Math.max(ALLOCATABLE, planner.count, 1));
+	const pct = (n: number) => (n / total) * 100;
 
 	function setFromEvent(e: PointerEvent) {
-		if (!trackEl || !planner.count) return;
+		if (!trackEl) return;
 		const r = trackEl.getBoundingClientRect();
 		const frac = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
-		planner.setCursor(frac * planner.count);
+		planner.setCursor(frac * total); // setCursor clamps to the planned length
 	}
 	function onTrackDown(e: PointerEvent) {
 		dragging = true;
@@ -43,7 +49,7 @@
 <div class="timeline">
 	<div class="bar">
 		<div class="info">
-			Step <b>{planner.cursor}</b> / {planner.count} · <b>{planner.cursor}</b> pts
+			<b>{planner.cursor}</b> / {total} nodes · plan covers <b>{planner.count}</b>
 		</div>
 		<div class="spacer"></div>
 		<button onclick={prevMilestone} title="Previous milestone">◀</button>
@@ -61,7 +67,15 @@
 		onpointermove={onTrackMove}
 		onpointerup={onTrackUp}
 	>
+		<!-- faint highlight for the portion of the tree the plan actually covers -->
+		<div class="planned" style:width="{pct(planner.count)}%"></div>
+		<!-- progress up to the current scrub position -->
 		<div class="fill" style:width="{pct(planner.cursor)}%"></div>
+		<!-- one tick line per allocatable point, so the full scale is visible -->
+		<div class="ticks" style:--n={total}></div>
+		{#if planner.count < total}
+			<div class="planend" style:left="{pct(planner.count)}%" title="End of plan ({planner.count} points)"></div>
+		{/if}
 		{#each planner.milestones as m, i (i)}
 			<div class="mstick" style:left="{pct(m.at)}%" title={m.label}></div>
 		{/each}
@@ -145,6 +159,16 @@
 		cursor: pointer;
 		touch-action: none;
 	}
+	/* region of the full tree the plan actually covers */
+	.planned {
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		background: #242424;
+		border-radius: 11px;
+		pointer-events: none;
+	}
 	.fill {
 		position: absolute;
 		left: 0;
@@ -152,6 +176,36 @@
 		bottom: 0;
 		background: linear-gradient(90deg, #2f6f47, #4ade80);
 		border-radius: 11px;
+		pointer-events: none;
+	}
+	/* scale gradations: minor line every 10 points, brighter major every 50
+	   (per-point lines would be unreadably dense at ~500 points) */
+	.ticks {
+		position: absolute;
+		inset: 0;
+		border-radius: 11px;
+		pointer-events: none;
+		background-image:
+			repeating-linear-gradient(
+				to right,
+				rgba(255, 255, 255, 0.22) 0 1px,
+				transparent 1px calc(100% / var(--n) * 50)
+			),
+			repeating-linear-gradient(
+				to right,
+				rgba(255, 255, 255, 0.09) 0 1px,
+				transparent 1px calc(100% / var(--n) * 10)
+			);
+	}
+	/* boundary between planned and not-yet-planned points */
+	.planend {
+		position: absolute;
+		top: -2px;
+		bottom: -2px;
+		width: 2px;
+		background: #6b6f7a;
+		transform: translateX(-1px);
+		pointer-events: none;
 	}
 	.mstick {
 		position: absolute;

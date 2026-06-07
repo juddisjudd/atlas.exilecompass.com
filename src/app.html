@@ -6,6 +6,20 @@
 		<link rel="icon" type="image/svg+xml" href="%sveltekit.assets%/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="text-scale" content="scale" />
+		<!-- umami analytics + session replay -->
+		<script
+			defer
+			src="https://umami.bawkbawk.net/script.js"
+			data-website-id="c20d09f8-1533-440b-80d5-2d8580696af0"
+		></script>
+		<script
+			defer
+			src="https://umami.bawkbawk.net/recorder.js"
+			data-website-id="c20d09f8-1533-440b-80d5-2d8580696af0"
+			data-sample-rate="0.15"
+			data-mask-level="moderate"
+			data-max-duration="300000"
+		></script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

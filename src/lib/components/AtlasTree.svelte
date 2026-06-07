@@ -81,11 +81,11 @@
 	const total = (s: string) => subtreeTotals[s] ?? 0;
 
 	const SUBTREES = [
-		{ name: 'Ritual', color: '#d9c52b' },
-		{ name: 'Breach', color: '#d96c1d' },
-		{ name: 'Delirium', color: '#2bd9c1' },
-		{ name: 'Incursion', color: '#d92b6a' },
-		{ name: 'Abyss', color: '#6e2bd9' }
+		{ name: 'Ritual', color: '#d9c52b', icon: '/misc/ritual.webp' },
+		{ name: 'Breach', color: '#d96c1d', icon: '/misc/breach.webp' },
+		{ name: 'Delirium', color: '#2bd9c1', icon: '/misc/delirium.webp' },
+		{ name: 'Incursion', color: '#d92b6a', icon: '/misc/incursion.webp' },
+		{ name: 'Abyss', color: '#6e2bd9', icon: '/misc/abyss.webp' }
 	];
 
 	// --- precomputed edge paths (node positions are static) ---
@@ -242,17 +242,116 @@
 			planner.toggle(h);
 		}
 	}
+
+	// --- search: highlight nodes whose name or stats match the query ---
+	// `searchInput` is the live field value; `query` is debounced and drives the
+	// highlight, so typing doesn't recompute/repaint per keystroke. Panning to a
+	// result is OPT-IN (the ▲/▼ buttons or arrow keys) — never automatic, so a big
+	// result set never freezes the canvas just from typing.
+	let searchInput = $state('');
+	let query = $state('');
+	let searchIdx = $state(0); // which result is "current"
+	let located = $state(false); // whether we've jumped to a result yet
+	let debounceT: ReturnType<typeof setTimeout> | undefined;
+
+	function onSearchInput(v: string) {
+		searchInput = v;
+		clearTimeout(debounceT);
+		debounceT = setTimeout(() => {
+			query = v;
+			searchIdx = 0;
+			located = false;
+		}, 200);
+	}
+	function clearSearch() {
+		clearTimeout(debounceT);
+		searchInput = '';
+		query = '';
+		searchIdx = 0;
+		located = false;
+	}
+
+	const searchActive = $derived(query.trim().length >= 2);
+	const searchHitList = $derived.by(() => {
+		const q = query.trim().toLowerCase();
+		if (q.length < 2) return [] as number[];
+		return tree.nodes
+			.filter(
+				(n) =>
+					n.t !== 'root' &&
+					(n.n.toLowerCase().includes(q) || n.st.some((s) => s.toLowerCase().includes(q)))
+			)
+			.map((n) => n.h);
+	});
+	const searchHits = $derived(new Set(searchHitList));
+	const currentHit = $derived(searchHitList[searchIdx] ?? null);
+	// When a search narrows to a single node, "radar ping" it so it's easy to spot.
+	const pingHit = $derived(searchHitList.length === 1 ? searchHitList[0] : null);
+
+	// Center the view on a node, zooming in a little if currently far out.
+	function panToNode(h: number) {
+		const n = nodeByHash.get(h);
+		if (!n || !viewport) return;
+		const s = Math.max(view.s, 0.55);
+		view = { s, tx: viewport.clientWidth / 2 - n.x * s, ty: viewport.clientHeight / 2 - n.y * s };
+	}
+	// First press jumps to the current (first) result; later presses move through.
+	function gotoResult(dir: number) {
+		const len = searchHitList.length;
+		if (!len) return;
+		if (located) searchIdx = (searchIdx + dir + len) % len;
+		located = true;
+		panToNode(searchHitList[searchIdx]);
+	}
+
+	function onWindowKey(e: KeyboardEvent) {
+		if (e.key === 'Escape') {
+			menuH = null;
+			return;
+		}
+		if (!searchActive || !searchHitList.length) return;
+		// Up/Down jump through results (Left/Right left alone so the query caret works)
+		if (e.key === 'ArrowDown') {
+			e.preventDefault();
+			gotoResult(1);
+		} else if (e.key === 'ArrowUp') {
+			e.preventDefault();
+			gotoResult(-1);
+		}
+	}
 </script>
 
-<svelte:window onkeydown={(e) => e.key === 'Escape' && (menuH = null)} />
+<svelte:window onkeydown={onWindowKey} />
 
 <div class="planner">
 	<header>
 		<h1>
 			<a class="brand" href="https://exilecompass.com">Exile<b>Compass</b></a>
-			<span class="sep">|</span> Atlas Tree
+			<span class="sep">|</span> Atlas Tree Planner
 		</h1>
-		<span class="stat"><b>{taken('Generic')}</b> / {total('Generic')} points</span>
+		<div class="search">
+			<input
+				placeholder="Search nodes…"
+				value={searchInput}
+				oninput={(e) => onSearchInput(e.currentTarget.value)}
+			/>
+			{#if searchActive}
+				<span class="count">
+					{located && searchHitList.length
+						? `${searchIdx + 1}/${searchHitList.length}`
+						: searchHitList.length}
+				</span>
+				<button
+					class="jump"
+					title="Jump to node (↓ next, ↑ previous)"
+					disabled={searchHitList.length === 0}
+					onclick={() => gotoResult(1)}>Jump to node</button
+				>
+			{/if}
+			{#if searchInput}
+				<button class="clr" title="Clear search" onclick={clearSearch}>×</button>
+			{/if}
+		</div>
 		<span class="spacer"></span>
 		{#if shareUrl}
 			<input class="sharelink" readonly value={shareUrl} onfocus={(e) => e.currentTarget.select()} />
@@ -334,6 +433,8 @@
 							class:allocated={planner.isTaken(n.h)}
 							class:future={planner.isFuture(n.h)}
 							class:preview={previewNodes.has(n.h)}
+							class:search-hit={searchHits.has(n.h)}
+							class:search-current={currentHit === n.h}
 							data-h={n.h}
 							role="button"
 							tabindex="-1"
@@ -384,6 +485,10 @@
 									preserveAspectRatio="xMidYMid meet"
 								/>
 								<circle class="overlay" cx={n.x} cy={n.y} {r} />
+								{#if pingHit === n.h}
+									<circle class="ping" cx={n.x} cy={n.y} {r} />
+									<circle class="ping ping2" cx={n.x} cy={n.y} {r} />
+								{/if}
 							{/if}
 						</g>
 					{/each}
@@ -448,10 +553,15 @@
 		{/if}
 
 		<div class="legend">
-			<h3>Subtrees</h3>
+			<h3>Allocations</h3>
+			<div class="row main">
+				<img class="sicon" src="/misc/atlas.webp" alt="" />
+				<span class="lname">Main</span>
+				<span class="lcount">{taken('Generic')}/{total('Generic')}</span>
+			</div>
 			{#each SUBTREES as st (st.name)}
 				<div class="row">
-					<span class="sw" style="background:{st.color}"></span>
+					<img class="sicon" src={st.icon} alt="" />
 					<span class="lname">{st.name}</span>
 					<span class="lcount">{taken(st.name)}/{total(st.name)}</span>
 				</div>
@@ -509,12 +619,61 @@
 		color: #59564c;
 		font-weight: 400;
 	}
-	header .stat {
-		color: #8a8d97;
-		font-size: 12px;
+	header .search {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 6px;
 	}
-	header .stat b {
+	header .search input {
+		background: #0d0d0d;
+		border: 1px solid #2a2a2a;
+		color: #d8dae0;
+		border-radius: 4px;
+		padding: 4px 8px;
+		font-size: 12px;
+		width: 170px;
+	}
+	header .search input:focus {
+		outline: none;
+		border-color: #c9aa45;
+	}
+	header .search .count {
 		color: #f0c850;
+		font:
+			11px ui-monospace,
+			monospace;
+	}
+	header .search .jump {
+		background: #161616;
+		border: 1px solid #2a2a2a;
+		color: #d8dae0;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 12px;
+		line-height: 1;
+		padding: 4px 8px;
+		white-space: nowrap;
+	}
+	header .search .jump:hover:not(:disabled) {
+		border-color: #c9aa45;
+		color: #c9aa45;
+	}
+	header .search .jump:disabled {
+		opacity: 0.35;
+		cursor: default;
+	}
+	header .search .clr {
+		background: none;
+		border: none;
+		color: #8a8d97;
+		cursor: pointer;
+		font-size: 15px;
+		line-height: 1;
+		padding: 0 2px;
+	}
+	header .search .clr:hover {
+		color: #e06a6a;
 	}
 	header .spacer {
 		flex: 1;
@@ -641,6 +800,46 @@
 		stroke-width: 4;
 		vector-effect: non-scaling-stroke;
 	}
+	/* glow the matches (no dimming of the rest) */
+	.node.search-hit {
+		opacity: 1;
+	}
+	/* matches get a cheap bright ring (no filter — filters on many nodes tank
+	   panning perf); only the focused result gets a single soft glow */
+	/* stroke-width is in tree units (scales with zoom) so the ring stays a thin
+	   halo proportional to the node instead of a fat fixed-pixel blob when zoomed out */
+	.node.search-hit circle.overlay {
+		stroke: #ffd966;
+		stroke-width: 9;
+	}
+	.node.search-current circle.overlay {
+		stroke: #fff6d5;
+		stroke-width: 14;
+		filter: drop-shadow(0 0 8px #ffd966);
+	}
+	/* radar ping for a sole search result — expanding rings that fade out */
+	.node .ping {
+		fill: none;
+		stroke: #ffe9a6;
+		stroke-width: 8;
+		pointer-events: none;
+		transform-box: fill-box;
+		transform-origin: center;
+		animation: node-ping 1.8s ease-out infinite;
+	}
+	.node .ping.ping2 {
+		animation-delay: 0.9s;
+	}
+	@keyframes node-ping {
+		0% {
+			transform: scale(0.7);
+			opacity: 0.85;
+		}
+		100% {
+			transform: scale(3.2);
+			opacity: 0;
+		}
+	}
 
 	.tip {
 		position: absolute;
@@ -688,6 +887,9 @@
 	}
 	.legend {
 		left: 12px;
+		font-size: 13px;
+		padding: 12px 14px;
+		min-width: 168px;
 	}
 	.help {
 		right: 12px;
@@ -695,8 +897,8 @@
 		max-width: 260px;
 	}
 	.legend h3 {
-		font-size: 11px;
-		margin: 0 0 4px;
+		font-size: 12px;
+		margin: 0 0 8px;
 		color: #8a8d97;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
@@ -704,15 +906,20 @@
 	.legend .row {
 		display: flex;
 		align-items: center;
-		gap: 6px;
-		margin: 2px 0;
+		gap: 10px;
+		margin: 5px 0;
 	}
-	.legend .sw {
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		border: 1px solid #1a1a1a;
+	.legend .row.main {
+		padding-bottom: 6px;
+		margin-bottom: 6px;
+		border-bottom: 1px solid #2a2a2a;
+	}
+	.legend .sicon {
+		width: 24px;
+		height: 24px;
+		object-fit: contain;
 		flex: none;
+		display: block;
 	}
 	.legend .lname {
 		flex: 1;
@@ -720,9 +927,9 @@
 	.legend .lcount {
 		color: #f0c850;
 		font:
-			11px ui-monospace,
+			13px ui-monospace,
 			monospace;
-		margin-left: 10px;
+		margin-left: 14px;
 	}
 	.help kbd {
 		background: #1a1a1a;
