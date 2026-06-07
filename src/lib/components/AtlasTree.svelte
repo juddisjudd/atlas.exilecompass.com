@@ -29,9 +29,26 @@
 	// --- sharing ---
 	let shareUrl = $state<string | null>(null);
 	let sharing = $state(false);
+	let copied = $state(false);
+	let copiedT: ReturnType<typeof setTimeout> | undefined;
+	function flagCopied() {
+		copied = true;
+		clearTimeout(copiedT);
+		copiedT = setTimeout(() => (copied = false), 2000);
+	}
+	async function copyLink() {
+		if (!shareUrl) return;
+		try {
+			await navigator.clipboard.writeText(shareUrl);
+			flagCopied();
+		} catch {
+			/* clipboard may be unavailable */
+		}
+	}
 	async function share() {
 		sharing = true;
 		shareUrl = null;
+		copied = false;
 		const code = encodePlan({
 			steps: planner.steps,
 			milestones: planner.milestones,
@@ -53,6 +70,7 @@
 		}
 		try {
 			await navigator.clipboard.writeText(shareUrl);
+			flagCopied();
 		} catch {
 			/* clipboard may be unavailable */
 		}
@@ -354,11 +372,22 @@
 		</div>
 		<span class="spacer"></span>
 		{#if shareUrl}
-			<input class="sharelink" readonly value={shareUrl} onfocus={(e) => e.currentTarget.select()} />
+			<input
+				class="sharelink"
+				readonly
+				value={shareUrl}
+				title={`${shareUrl}\n(click to copy)`}
+				onclick={(e) => {
+					e.currentTarget.select();
+					copyLink();
+				}}
+				onfocus={(e) => e.currentTarget.select()}
+			/>
+			{#if copied}<span class="copied">✓ Copied!</span>{/if}
 		{/if}
 		{#if !readonly}
 			<button class="primary" disabled={sharing || planner.count === 0} onclick={share}>
-				{sharing ? 'Sharing…' : 'Share'}
+				{sharing ? 'Sharing…' : copied ? '✓ Copied!' : 'Share'}
 			</button>
 			<button onclick={() => planner.clear()}>Clear</button>
 		{/if}
@@ -729,7 +758,19 @@
 		font:
 			11px ui-monospace,
 			monospace;
-		width: 230px;
+		width: 340px;
+		max-width: 40vw;
+		cursor: pointer;
+		text-overflow: ellipsis;
+	}
+	header .sharelink:hover {
+		border-color: #c9aa45;
+	}
+	header .copied {
+		color: #4ade80;
+		font-size: 12px;
+		font-weight: 600;
+		white-space: nowrap;
 	}
 
 	.viewport {
