@@ -9,10 +9,17 @@
 //   u16 choiceCount, then per choice: u16 node hash, u8 option index
 // The option is stored as its index within the node's baked `c` list (1 byte);
 // the treeVersion guard ensures that index still resolves to the same option.
+// v3 appends, after the choices:
+//   u16 notesLen, notes (utf8)   — free-text plan notes (16-bit length: may
+//   exceed the 255-byte cap used for titles/milestone labels)
 import { tree } from './tree-data';
 import type { Milestone } from './planner.svelte';
 
-export const SHARE_VERSION = 2;
+export const SHARE_VERSION = 3;
+
+// Cap on shared notes length (bytes). Generous for a paragraph or two while
+// keeping the URL hash and stored blob bounded.
+export const MAX_NOTES = 4000;
 
 export interface Plan {
 	v: number;
@@ -20,6 +27,7 @@ export interface Plan {
 	steps: number[];
 	milestones: Milestone[];
 	title: string;
+	notes: string;
 	choices: Record<number, number>; // node hash -> chosen option index
 }
 
@@ -27,6 +35,7 @@ export interface PlanInput {
 	steps: number[];
 	milestones: Milestone[];
 	title?: string;
+	notes?: string;
 	choices?: Record<number, number>; // node hash -> chosen option index
 }
 
@@ -63,6 +72,12 @@ export function encodePlan(plan: PlanInput): string {
 		bytes.push(b.length);
 		for (const x of b) bytes.push(x);
 	};
+	// 16-bit-length string, for fields that may exceed 255 bytes (notes).
+	const str16 = (s: string, max: number) => {
+		const b = Array.from(encoder.encode(s)).slice(0, max);
+		u16(b.length);
+		for (const x of b) bytes.push(x);
+	};
 
 	bytes.push(SHARE_VERSION);
 	for (const b of hexToBytes(tree.version, 6)) bytes.push(b);
@@ -82,6 +97,8 @@ export function encodePlan(plan: PlanInput): string {
 		u16(Number(k) & 0xffff);
 		bytes.push(idx & 0xff);
 	}
+	// v3: free-text notes
+	str16(plan.notes ?? '', MAX_NOTES);
 	return bytesToBase64Url(Uint8Array.from(bytes));
 }
 
@@ -121,7 +138,13 @@ export function decodePlan(code: string): Plan | null {
 				choices[h] = u8();
 			}
 		}
-		return { v, treeVersion, steps, milestones, title, choices };
+		let notes = '';
+		if (v >= 3 && p < bytes.length) {
+			const len = u16();
+			notes = decoder.decode(bytes.slice(p, p + len));
+			p += len;
+		}
+		return { v, treeVersion, steps, milestones, title, notes, choices };
 	} catch {
 		return null;
 	}

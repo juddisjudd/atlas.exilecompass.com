@@ -15,6 +15,7 @@ export class Planner {
 	cursor = $state(0); // how many steps are "taken" in the current view
 	milestones = $state<Milestone[]>([]);
 	title = $state('');
+	notes = $state('');
 	// node hash -> chosen option index (into the node's baked `c` list), for
 	// multi-choice selector nodes. Index (not stat id) because a selector may
 	// list the same stat twice at different values.
@@ -106,6 +107,7 @@ export class Planner {
 		this.cursor = 0;
 		this.milestones = [];
 		this.title = '';
+		this.notes = '';
 		this.choices = new Map();
 	}
 
@@ -114,6 +116,7 @@ export class Planner {
 		steps: number[];
 		milestones: Milestone[];
 		title?: string;
+		notes?: string;
 		choices?: Record<number, number>;
 	}): void {
 		this.steps = plan.steps.filter((h) => nodeByHash.has(h));
@@ -122,6 +125,7 @@ export class Planner {
 			.map((m) => ({ ...m, at: Math.max(0, Math.min(m.at, n)) }))
 			.sort((a, b) => a.at - b.at);
 		this.title = plan.title ?? '';
+		this.notes = plan.notes ?? '';
 		this.cursor = n;
 		// restore choices for allocated nodes whose option index is still valid
 		const allocated = new Set(this.steps);

@@ -188,12 +188,11 @@
   ],
 
   "dummy_display_content_chances_selector": [
-    "dummy_display_atlas_multichoice_no_bias",
-    "map_strongbox_chance_+%",
-    "map_shrine_chance_+%",
     "map_monolith_chance_+%",
+    "map_rogue_exile_chance_+%",
     "map_stone_circle_chance_+%",
-    "map_tormented_spirit_chance_+%",
-    "map_rogue_exile_chance_+%"
+    "map_shrine_chance_+%",
+    "map_strongbox_chance_+%",
+    "map_tormented_spirit_chance_+%"
   ]
 }

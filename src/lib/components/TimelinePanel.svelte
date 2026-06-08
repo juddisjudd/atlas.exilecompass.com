@@ -104,6 +104,9 @@
 				</div>
 			{/each}
 		</div>
+	{:else if !readonly}
+		<!-- reserve the row so adding the first milestone doesn't shift the layout -->
+		<div class="mlist empty">Set your first milestone…</div>
 	{/if}
 </div>
 
@@ -283,5 +286,13 @@
 	}
 	.chip .del:hover {
 		color: #e06a6a;
+	}
+	/* empty-state placeholder: same vertical footprint as a chip row */
+	.mlist.empty {
+		align-items: center;
+		min-height: 26px;
+		color: #6f727b;
+		font-size: 12px;
+		font-style: italic;
 	}
 </style>

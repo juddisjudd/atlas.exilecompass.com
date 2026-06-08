@@ -8,8 +8,11 @@
 		frameUrl,
 		type FrameState
 	} from '$lib/atlas/tree-data';
+	import { untrack } from 'svelte';
+	import { browser } from '$app/environment';
 	import { Planner } from '$lib/atlas/planner.svelte';
-	import { encodePlan } from '$lib/atlas/share';
+	import { encodePlan, MAX_NOTES } from '$lib/atlas/share';
+	import { FEATURED_ENABLED, FEATURED_PLANS } from '$lib/featured';
 
 	// Display radius of a node's footprint (frame for normal/notable/keystone,
 	// the larger start art for roots).
@@ -25,6 +28,34 @@
 
 	let { planner = new Planner(), readonly = false }: { planner?: Planner; readonly?: boolean } =
 		$props();
+
+	// Floating notes panel: expanded by default on a shared (readonly) plan where
+	// the notes are the point; collapsed in the editor so it stays out of the way.
+	let notesOpen = $state(untrack(() => readonly));
+
+	// 'YYYY-MM-DD' -> 'm/d/year' without going through Date() (avoids timezone
+	// shifting the day for a date-only string).
+	function fmtDate(iso: string): string {
+		const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+		return m ? `${+m[2]}/${+m[3]}/${m[1]}` : iso;
+	}
+
+	// --- featured planners modal ---
+	const HIDE_FEATURED_KEY = 'ATLAS_HIDE_FEATURED_V1';
+	// Init synchronously from storage so opted-out users never see a flash.
+	let featuredDismissed = $state(browser && localStorage.getItem(HIDE_FEATURED_KEY) === '1');
+	let dontShowFeatured = $state(false);
+	// Once the user starts planning (or a shared plan loads nodes), drop the modal.
+	$effect(() => {
+		if (planner.count > 0) featuredDismissed = true;
+	});
+	const showFeatured = $derived(
+		FEATURED_ENABLED && browser && !readonly && FEATURED_PLANS.length > 0 && !featuredDismissed
+	);
+	function dismissFeatured() {
+		if (dontShowFeatured) localStorage.setItem(HIDE_FEATURED_KEY, '1');
+		featuredDismissed = true;
+	}
 
 	// --- sharing ---
 	let shareUrl = $state<string | null>(null);
@@ -53,6 +84,7 @@
 			steps: planner.steps,
 			milestones: planner.milestones,
 			title: planner.title,
+			notes: planner.notes,
 			choices: Object.fromEntries(planner.choices)
 		});
 		location.hash = code;
@@ -171,6 +203,9 @@
 		// Clicks inside the menu, or on a node, are handled elsewhere (the node's
 		// own click toggles its menu); don't pan or dismiss for those.
 		if ((e.target as Element).closest('.node-menu')) return;
+		// Presses on floating UI (notes panel, featured cards) must keep their own
+		// click/focus — panning here would capture the pointer and swallow it.
+		if ((e.target as Element).closest('.notes, .featured, .featured-backdrop')) return;
 		if (!viewport || (e.target as Element).closest('.node')) return;
 		menuH = null; // a press on empty canvas dismisses the choice menu
 		dragging = true;
@@ -324,6 +359,10 @@
 
 	function onWindowKey(e: KeyboardEvent) {
 		if (e.key === 'Escape') {
+			if (showFeatured) {
+				dismissFeatured();
+				return;
+			}
 			menuH = null;
 			return;
 		}
@@ -383,7 +422,6 @@
 				}}
 				onfocus={(e) => e.currentTarget.select()}
 			/>
-			{#if copied}<span class="copied">✓ Copied!</span>{/if}
 		{/if}
 		{#if !readonly}
 			<button class="primary" disabled={sharing || planner.count === 0} onclick={share}>
@@ -580,6 +618,98 @@
 			</div>
 		{/if}
 
+		{#if showFeatured}
+			<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+			<div class="featured-backdrop" onclick={dismissFeatured}>
+				<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+				<div class="featured" onclick={(e) => e.stopPropagation()}>
+					<button class="fclose" title="Close" aria-label="Close" onclick={dismissFeatured}>×</button>
+					<h2>Featured planners</h2>
+					<p class="fsub">Start from a curated plan, or close this to build your own.</p>
+					<div class="fcards">
+						{#each FEATURED_PLANS as f (f.id)}
+							<div class="fcard">
+								<a class="ftitle" href="/{f.id}">{f.title}</a>
+								<div class="fmeta">
+									<span class="fby">by {f.author} · Updated {fmtDate(f.updated)}</span>
+									{#if f.twitch}
+										<a
+											class="ficon"
+											href={f.twitch}
+											target="_blank"
+											rel="noopener noreferrer"
+											title="Twitch"
+											aria-label="{f.author} on Twitch"
+										>
+											<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+												<path
+													fill="currentColor"
+													d="M4.3 3 3 6.2v12.3h4.3V21h2.4l2.4-2.5h3.5L21 13.7V3H4.3Zm14.3 9.9-2.7 2.7h-4.3l-2.4 2.4v-2.4H6.2V4.7h12.4v8.2ZM15 7.6h1.7v4.8H15V7.6Zm-4.6 0H12v4.8h-1.6V7.6Z"
+												/>
+											</svg>
+										</a>
+									{/if}
+									{#if f.youtube}
+										<a
+											class="ficon"
+											href={f.youtube}
+											target="_blank"
+											rel="noopener noreferrer"
+											title="YouTube"
+											aria-label="{f.author} on YouTube"
+										>
+											<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+												<path
+													fill="currentColor"
+													d="M23 7.5a3 3 0 0 0-2.1-2.1C19 4.8 12 4.8 12 4.8s-7 0-8.9.6A3 3 0 0 0 1 7.5 31.4 31.4 0 0 0 .5 12 31.4 31.4 0 0 0 1 16.5a3 3 0 0 0 2.1 2.1c1.9.6 8.9.6 8.9.6s7 0 8.9-.6a3 3 0 0 0 2.1-2.1c.4-1.5.5-3 .5-4.5s-.1-3-.5-4.5ZM9.8 15.3V8.7l5.7 3.3-5.7 3.3Z"
+												/>
+											</svg>
+										</a>
+									{/if}
+								</div>
+							</div>
+						{/each}
+					</div>
+					<label class="fdont">
+						<input type="checkbox" bind:checked={dontShowFeatured} />
+						Don't show this again
+					</label>
+				</div>
+			</div>
+		{/if}
+
+		{#if !readonly || planner.notes}
+			<div class="notes" class:open={notesOpen}>
+				{#if notesOpen}
+					<div class="notes-head">
+						<span class="notes-title">📝 Notes</span>
+						<button
+							class="notes-collapse"
+							title="Collapse notes"
+							aria-label="Collapse notes"
+							onclick={() => (notesOpen = false)}>–</button
+						>
+					</div>
+					{#if readonly}
+						<p class="notes-ro">{planner.notes}</p>
+					{:else}
+						<textarea
+							class="notes-input"
+							name="plan-notes"
+							aria-label="Plan notes"
+							maxlength={MAX_NOTES}
+							placeholder="Notes for this plan (shared along with it)…"
+							bind:value={planner.notes}
+						></textarea>
+					{/if}
+				{:else}
+					<button class="notes-pill" title="Show notes" onclick={() => (notesOpen = true)}>
+						📝 Notes{#if planner.notes}<span class="notes-dot">●</span>{/if}
+					</button>
+				{/if}
+			</div>
+		{/if}
+
 		<div class="legend">
 			<h3>Allocations</h3>
 			<div class="row main">
@@ -599,6 +729,7 @@
 			<div><kbd>Drag</kbd> pan · <kbd>Wheel</kbd> zoom</div>
 			<div><kbd>Hover</kbd> preview path · <kbd>Click</kbd> allocate / remove</div>
 		</div>
+
 	</div>
 </div>
 
@@ -765,11 +896,223 @@
 	header .sharelink:hover {
 		border-color: #c9aa45;
 	}
-	header .copied {
-		color: #4ade80;
-		font-size: 12px;
-		font-weight: 600;
-		white-space: nowrap;
+
+	/* floating notes panel, top-left of the viewport. Collapses to a small pill. */
+	.notes {
+		position: absolute;
+		top: 12px;
+		left: 12px;
+		z-index: 11;
+	}
+	.notes-pill {
+		background: rgba(15, 15, 15, 0.85);
+		border: 1px solid #2a2a2a;
+		border-radius: 4px;
+		color: #c4c7cf;
+		font:
+			12px system-ui,
+			sans-serif;
+		padding: 6px 10px;
+		cursor: pointer;
+	}
+	.notes-pill:hover {
+		border-color: #c9aa45;
+		color: #c9aa45;
+	}
+	.notes-dot {
+		color: #c9aa45;
+		font-size: 8px;
+		margin-left: 6px;
+		vertical-align: middle;
+	}
+	.notes.open {
+		display: flex;
+		flex-direction: column;
+		/* size to the (resizable) textarea so dragging it wider grows the panel */
+		width: fit-content;
+		min-width: 240px;
+		max-width: 80vw;
+		background: rgba(15, 15, 15, 0.92);
+		border: 1px solid #2a2a2a;
+		border-radius: 6px;
+		padding: 8px 10px 10px;
+	}
+	.notes-head {
+		display: flex;
+		align-items: center;
+		margin-bottom: 6px;
+	}
+	.notes-title {
+		flex: 1;
+		color: #8a8d97;
+		font:
+			600 11px system-ui,
+			sans-serif;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+	.notes-collapse {
+		background: none;
+		border: none;
+		color: #8a8d97;
+		font-size: 16px;
+		line-height: 1;
+		cursor: pointer;
+		padding: 0 4px;
+	}
+	.notes-collapse:hover {
+		color: #c9aa45;
+	}
+	.notes-input {
+		display: block;
+		width: 256px;
+		min-width: 220px;
+		max-width: 78vw;
+		min-height: 64px;
+		box-sizing: border-box;
+		background: #0d0d0d;
+		border: 1px solid #242424;
+		border-radius: 4px;
+		color: #d8dae0;
+		font:
+			12px/1.5 system-ui,
+			sans-serif;
+		padding: 6px 8px;
+		resize: both;
+	}
+	.notes-input:focus {
+		outline: none;
+		border-color: #c9aa45;
+	}
+	.notes-ro {
+		margin: 0;
+		width: 256px;
+		max-width: 78vw;
+		max-height: 40vh;
+		overflow-y: auto;
+		white-space: pre-wrap;
+		color: #c4c7cf;
+		font:
+			12px/1.5 system-ui,
+			sans-serif;
+	}
+
+	/* featured plans modal: dimmed backdrop (click to dismiss) + centered card. */
+	.featured-backdrop {
+		position: absolute;
+		inset: 0;
+		z-index: 20;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(0, 0, 0, 0.6);
+	}
+	.featured {
+		position: relative;
+		text-align: center;
+		max-width: 90%;
+		max-height: 86%;
+		overflow-y: auto;
+		background: rgba(12, 12, 12, 0.98);
+		border: 1px solid #2f2a1c;
+		border-radius: 10px;
+		padding: 22px 26px;
+		box-shadow: 0 12px 44px rgba(0, 0, 0, 0.55);
+	}
+	.fclose {
+		position: absolute;
+		top: 8px;
+		right: 10px;
+		background: none;
+		border: none;
+		color: #8a8d97;
+		font-size: 20px;
+		line-height: 1;
+		cursor: pointer;
+	}
+	.fclose:hover {
+		color: #c9aa45;
+	}
+	.fdont {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin-top: 16px;
+		color: #8a8d97;
+		font:
+			12px system-ui,
+			sans-serif;
+		cursor: pointer;
+	}
+	.fdont input {
+		cursor: pointer;
+	}
+	.featured h2 {
+		margin: 0 0 4px;
+		color: #f2dea0;
+		font:
+			600 20px system-ui,
+			sans-serif;
+	}
+	.featured .fsub {
+		margin: 0 0 16px;
+		color: #9aa0ab;
+		font:
+			13px system-ui,
+			sans-serif;
+	}
+	.featured .fcards {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		justify-content: center;
+	}
+	.featured .fcard {
+		pointer-events: auto;
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+		min-width: 220px;
+		max-width: 300px;
+		padding: 12px 16px;
+		background: rgba(16, 16, 16, 0.92);
+		border: 1px solid #2f2a1c;
+		border-radius: 8px;
+		text-align: left;
+		transition: border-color 0.12s;
+	}
+	.featured .fcard:hover {
+		border-color: #c9aa45;
+	}
+	.featured .ftitle {
+		color: #f2dea0;
+		font:
+			600 14px system-ui,
+			sans-serif;
+		text-decoration: none;
+	}
+	.featured .ftitle:hover {
+		text-decoration: underline;
+	}
+	.featured .fmeta {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		color: #9aa0ab;
+		font:
+			12px/1.4 system-ui,
+			sans-serif;
+	}
+	.featured .fby {
+		flex: 1;
+	}
+	.featured .ficon {
+		display: inline-flex;
+		color: #9aa0ab;
+		transition: color 0.12s;
+	}
+	.featured .ficon:hover {
+		color: #c9aa45;
 	}
 
 	.viewport {
