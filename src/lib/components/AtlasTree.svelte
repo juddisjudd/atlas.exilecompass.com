@@ -11,7 +11,9 @@
 	import { untrack } from 'svelte';
 	import { browser } from '$app/environment';
 	import { Planner } from '$lib/atlas/planner.svelte';
+	import { fmtChoiceLabel } from '$lib/atlas/stats';
 	import { encodePlan, MAX_NOTES } from '$lib/atlas/share';
+	import ModifierSummary from './ModifierSummary.svelte';
 	import { FEATURED_ENABLED, FEATURED_PLANS } from '$lib/featured';
 
 	// Display radius of a node's footprint (frame for normal/notable/keystone,
@@ -203,9 +205,9 @@
 		// Clicks inside the menu, or on a node, are handled elsewhere (the node's
 		// own click toggles its menu); don't pan or dismiss for those.
 		if ((e.target as Element).closest('.node-menu')) return;
-		// Presses on floating UI (notes panel, featured cards) must keep their own
-		// click/focus — panning here would capture the pointer and swallow it.
-		if ((e.target as Element).closest('.notes, .featured, .featured-backdrop')) return;
+		// Presses on floating UI (notes panel, modifiers, featured cards) must keep
+		// their own click/focus — panning here would capture the pointer and swallow it.
+		if ((e.target as Element).closest('.notes, .mods, .featured, .featured-backdrop')) return;
 		if (!viewport || (e.target as Element).closest('.node')) return;
 		menuH = null; // a press on empty canvas dismisses the choice menu
 		dragging = true;
@@ -270,15 +272,6 @@
 	const tipNode = $derived(tip ? nodeByHash.get(tip.h) : null);
 	const tipRect = $derived(tip && viewport ? viewport.getBoundingClientRect() : null);
 
-	// --- multi-choice selector nodes ---
-	// Variant labels carry a {0} magnitude placeholder; drop it for the menu text.
-	function fmtChoice(label: string): string {
-		const s = label
-			.replace(/\{0\}%?/g, '')
-			.replace(/\s+/g, ' ')
-			.trim();
-		return s ? s[0].toUpperCase() + s.slice(1) : label;
-	}
 	// --- at-node choice menu (for multi-choice selector nodes) ---
 	// Holds the hash of the node whose menu is open; positioned at the node.
 	let menuH = $state<number | null>(null);
@@ -585,7 +578,7 @@
 						{#each tipNode.c as o, i (i)}
 							<div class="opt" class:sel={i === planner.choiceOf(tipNode.h)}>
 								<span class="num">{i + 1}</span>
-								<span>{fmtChoice(o.label)}</span>
+								<span>{fmtChoiceLabel(o.label)}</span>
 							</div>
 						{/each}
 					</div>
@@ -612,7 +605,7 @@
 						class:sel={i === planner.choiceOf(menuNode.h)}
 						onclick={() => { planner.setChoice(menuNode.h, i); menuH = null; }}
 					>
-						{fmtChoice(o.label)}
+						{fmtChoiceLabel(o.label)}
 					</button>
 				{/each}
 			</div>
@@ -709,6 +702,8 @@
 				{/if}
 			</div>
 		{/if}
+
+		<ModifierSummary {planner} />
 
 		<div class="legend">
 			<h3>Allocations</h3>
