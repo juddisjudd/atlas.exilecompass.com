@@ -1,26 +1,18 @@
 #!/usr/bin/env python3
 """
 Build data/atlas_variant_labels.json: option stat id -> condition-line templates,
-consumed by scripts/bake.mjs to render multi-choice selector option labels.
+consumed by bake.mjs to render multi-choice selector labels.
 
-Output shape, per id:
-    "<stat_id>": [ { "min": <int|null>, "max": <int|null>, "t": "<template>" }, ... ]
-where `t` keeps the {0}/{1} value placeholders. bake.mjs substitutes the values
-from data/selector-options.json (picking the line whose [min,max] the value falls
-in, so "increased" vs "reduced" renders correctly), or leaves the placeholders in
-for value-less options (the UI strips them).
+Per id: [ { "min": int|null, "max": int|null, "t": "<template>" }, ... ]. `t` keeps
+the {0}/{1} placeholders; bake.mjs substitutes values from selector-options.json,
+picking the line whose [min,max] the value falls in (so increased vs reduced renders
+correctly), or leaves them for the UI to strip on value-less options.
 
-Labels come from two game stat-translation files:
-  - atlas_variant_stat_descriptions.json : short radial labels (biomes, essence,
-    rogue exiles, etc.)
-  - atlas_stat_descriptions.json         : full-sentence stats used by the
-    "difficulty"/content selectors (rare/magic monsters, ritual, breach, ...).
+Sources: atlas_variant_stat_descriptions.json (short radial labels) and
+atlas_stat_descriptions.json (full-sentence content stats). Only ids referenced by
+selector-options.json are emitted; the variant file wins on id collisions.
 
-Only ids referenced by data/selector-options.json are emitted, so the file stays
-small. The variant file wins on id collisions (its labels are menu-friendly).
-
-Usage:
-  python scripts/extract_variant_labels.py <variant_desc.json> <atlas_desc.json> [out.json]
+Usage: python scripts/extract_variant_labels.py <variant_desc> <atlas_desc> [out]
 """
 import json
 import re

@@ -1,12 +1,7 @@
-// Bake data/data_us.json (+ data/Atlas.json for type flags) into a compact,
-// render-ready tree at src/lib/atlas/tree.json:
-//   - node screen positions (orbit -> x/y)
-//   - edges with arc geometry for same-group/same-orbit links
-//   - node type (root/notable/keystone/normal; mastery nodes are dropped)
-//   - subtree colour (BFS component from each root)
-//   - local icon paths (/icons/<name>.webp)
-//
-// Run:  bun run bake     (or: node scripts/bake.mjs)
+// Bake data/data_us.json (+ Atlas.json type flags) into the render-ready tree at
+// src/lib/atlas/tree.json: node screen positions, edge arc geometry, node types
+// (mastery dropped), per-subtree colour (BFS from each root), and local icon paths.
+// Run:  bun run bake   (or: node scripts/bake.mjs)
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -16,10 +11,9 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dataUsRaw = readFileSync(join(root, 'data/data_us.json'), 'utf8');
 const dataUs = JSON.parse(dataUsRaw);
 const atlas = JSON.parse(readFileSync(join(root, 'data/Atlas.json'), 'utf8'));
-// Multi-choice selector support: option templates (id -> condition lines) and
-// the hand-curated map of selector dummy-stat id -> ordered options. An option
-// is either a bare stat id (value-less; placeholders kept) or { id, v } where v
-// is a number (or [n,n] for two-value templates).
+// Multi-choice selector support: option templates (id -> condition lines) and the
+// hand-curated selector-dummy-id -> options map. An option is a bare stat id
+// (value-less) or { id, v } where v is a number (or [n,n] for two-value templates).
 const optionTemplates = JSON.parse(readFileSync(join(root, 'data/atlas_variant_labels.json'), 'utf8'));
 const selectorOptions = JSON.parse(readFileSync(join(root, 'data/selector-options.json'), 'utf8'));
 

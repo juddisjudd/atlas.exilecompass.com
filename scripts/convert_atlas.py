@@ -1,39 +1,25 @@
 #!/usr/bin/env python3
 """
-Convert the game's Atlas.json (extracted from PoE2) into the data_us.json
-format used by this viewer.
+Convert the game's Atlas.json (PoE2 export) to the data_us.json format the bake
+step consumes.
 
-Background / field correlation (Atlas.json  ->  data_us.json)
--------------------------------------------------------------
-Atlas.json (game)                         data_us.json (viewer)
-  groups[i]                          ==     groups[str(i+1)]   (1-indexed keys)
-    .x, .y                           ->       .x, .y
-    .passives[].radius               ->     node .orbit
-    .passives[].position_clockwise   ->     node .orbitIndex
-    .passives[].connections[j]       ->     node .connections[j].id
-    .passives[].splines[j]           ->     node .connections[j].orbit
-  passives[hash]                            nodes[hash]
-    .id                              ->       .id
-    .name (or .id if blank)          ->       .name
-    .stat_text  (markup stripped)    ->       .stats
-    .icon  ("X.dds")                 ->       .icon ("https://cdn.poe2db.tw/image/X.webp")
-  roots                              ->     synthetic nodes["root"].out
-  orbit_radii / skills_per_orbit     ->     constants.orbitRadii / .skillsPerOrbit
+Non-obvious field mapping (Atlas.json -> data_us.json):
+  groups[i]                    -> groups[str(i+1)]   (keys are 1-indexed)
+  passive.radius               -> node.orbit
+  passive.position_clockwise   -> node.orbitIndex
+  passive.splines[j]           -> node.connections[j].orbit
+  passive.stat_text (markup -) -> node.stats
 
-Notes:
-  * Mastery nodes (is_icon_only) are kept here so the data file stays complete;
-    the viewer filters them out at render time.
-  * poe2db-only extras (sprites, jewelSlots, imageZoomLevels) are not present in
-    the game file and are emitted empty -- the viewer does not use them.
-  * totalPoints / ascendancyPoints are game progression caps, not present in
-    Atlas.json, so they are passed through as constants below.
+Mastery nodes (is_icon_only) are kept; the viewer filters them at render time.
+poe2db-only fields (sprites, jewelSlots, ...) aren't in the game file -> empty.
+totalPoints / ascendancyPoints are game caps not in Atlas.json; set below.
 """
 import json
 import re
 import sys
 
 CDN_PREFIX = "https://cdn.poe2db.tw/image/"
-TOTAL_POINTS = 123       # max atlas points (game cap; not in Atlas.json)
+TOTAL_POINTS = 123
 ASCENDANCY_POINTS = 8
 
 # [Tag|Display Text] -> "Display Text"   and   [Word] -> "Word"
@@ -107,7 +93,7 @@ def convert(atlas):
         "groups": out_groups,
         "nodes": out_nodes,
         "extraImages": [],
-        "jewelSlots": [],            # not in game file; unused by viewer
+        "jewelSlots": [],
         "min_x": int(min(xs)), "min_y": int(min(ys)),
         "max_x": int(max(xs)), "max_y": int(max(ys)),
         "constants": {

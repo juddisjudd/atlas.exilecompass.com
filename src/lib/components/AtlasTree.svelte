@@ -465,7 +465,6 @@
 						/>
 					{/each}
 				</g>
-				<!-- edges -->
 				<g class="edges">
 					{#each edges as e (e.key)}
 						<path
@@ -479,7 +478,6 @@
 						/>
 					{/each}
 				</g>
-				<!-- nodes -->
 				<g class="nodes">
 					{#each tree.nodes as n (n.h)}
 						{@const isRoot = n.t === 'root'}

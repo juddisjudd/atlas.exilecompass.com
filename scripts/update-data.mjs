@@ -1,10 +1,7 @@
-// Fetch the latest PoE2 atlas data from the repoe-fork export, copy it into
-// data/, then regenerate the baked tree (convert -> extract labels -> bake).
-//
-// Source: https://repoe-fork.github.io/poe2/  (same export, kept current by the
-// repoe-fork project). The selector -> option-ids map in data/selector-options.json
-// is hand-curated and is NOT overwritten by this script.
-//
+// Fetch the latest PoE2 atlas data from the repoe-fork export into data/, then
+// regenerate the baked tree (convert -> extract labels -> bake). The hand-curated
+// data/selector-options.json is NOT overwritten.
+// Source: https://repoe-fork.github.io/poe2/
 // Run:  bun scripts/update-data.mjs   (or: bun run update)
 import { mkdir, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';

@@ -21,15 +21,6 @@ export interface FeaturedPlan {
 	youtube?: string; // full channel URL
 }
 
-export const FEATURED_PLANS: FeaturedPlan[] = [
-	// DEMO entry so the overlay is visible — replace `id` with a real share id
-	// (the title link 404s until you do) and drop in the real social URLs.
-	{
-		id: 'REPLACE_ME',
-		title: 'Fungun Atlas Tree & Strats',
-		author: 'Fungun',
-		updated: '2026-06-08',
-		twitch: 'https://twitch.tv/',
-		youtube: 'https://youtube.com/'
-	}
-];
+// Add entries here and set FEATURED_ENABLED to true to show the overlay. Each
+// `id` is a shared plan's short id (the part after the domain in its share URL).
+export const FEATURED_PLANS: FeaturedPlan[] = [];
