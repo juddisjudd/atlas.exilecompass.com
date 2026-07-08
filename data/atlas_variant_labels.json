@@ -6,13 +6,6 @@
 "t": "Any Faction"
 }
 ],
-"dummy_display_atlas_multichoice_no_bias": [
-{
-"min": null,
-"max": null,
-"t": "No Change"
-}
-],
 "dummy_display_breach_breachstone_extra_modifier": [
 {
 "min": null,
@@ -933,30 +926,6 @@
 "t": "{0} additional Rogue Exiles"
 }
 ],
-"maps_with_powerful_bosses_additional_shrine_+": [
-{
-"min": 1,
-"max": 1,
-"t": "An additional Shrine"
-},
-{
-"min": null,
-"max": null,
-"t": "{0} additional Shrines"
-}
-],
-"maps_with_powerful_bosses_additional_spirit_+": [
-{
-"min": 1,
-"max": 1,
-"t": "An additional Azmeri Spirit"
-},
-{
-"min": null,
-"max": null,
-"t": "{0} additional Azmeri Spirits"
-}
-],
 "maps_with_powerful_bosses_additional_stone_circle_+": [
 {
 "min": 1,
@@ -967,18 +936,6 @@
 "min": null,
 "max": null,
 "t": "A Summoning Circle {0} Reactivation Runes"
-}
-],
-"maps_with_powerful_bosses_additional_strongbox_+": [
-{
-"min": 1,
-"max": 1,
-"t": "An additional Strongbox"
-},
-{
-"min": null,
-"max": null,
-"t": "{0} additional Strongboxes"
 }
 ]
 }

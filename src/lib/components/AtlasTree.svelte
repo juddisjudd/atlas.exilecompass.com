@@ -137,7 +137,8 @@
 		{ name: 'Breach', color: '#d96c1d', icon: '/misc/breach.webp' },
 		{ name: 'Delirium', color: '#2bd9c1', icon: '/misc/delirium.webp' },
 		{ name: 'Incursion', color: '#d92b6a', icon: '/misc/incursion.webp' },
-		{ name: 'Abyss', color: '#6e2bd9', icon: '/misc/abyss.webp' }
+		{ name: 'Abyss', color: '#6e2bd9', icon: '/misc/abyss.webp' },
+		{ name: 'Expedition', color: '#c4832b', icon: '/misc/expedition.webp' }
 	];
 
 	// --- precomputed edge paths (node positions are static) ---

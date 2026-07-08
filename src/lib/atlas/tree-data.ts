@@ -82,6 +82,7 @@ export const SUBTREE_COLORS: Record<string, string> = {
 	Delirium: '#2bd9c1',
 	Incursion: '#d92b6a',
 	Abyss: '#6e2bd9',
+	Expedition: '#c4832b',
 	Generic: '#6b6f7a'
 };
 

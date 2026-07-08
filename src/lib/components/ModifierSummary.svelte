@@ -15,7 +15,8 @@
 		Breach: { label: 'Breach', icon: '/misc/breach.webp' },
 		Delirium: { label: 'Delirium', icon: '/misc/delirium.webp' },
 		Incursion: { label: 'Incursion', icon: '/misc/incursion.webp' },
-		Abyss: { label: 'Abyss', icon: '/misc/abyss.webp' }
+		Abyss: { label: 'Abyss', icon: '/misc/abyss.webp' },
+		Expedition: { label: 'Expedition', icon: '/misc/expedition.webp' }
 	};
 
 	// Follows the timeline cursor, so scrubbing shows the modifiers you'd have

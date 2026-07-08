@@ -69,7 +69,7 @@ const NUM = /\d+(?:\.\d+)?/g;
 const SLOT = String.fromCharCode(0);
 
 // Generic ("Main") first, then the league subtrees in legend order.
-const SUBTREE_ORDER = ['Generic', 'Ritual', 'Breach', 'Delirium', 'Incursion', 'Abyss'];
+const SUBTREE_ORDER = ['Generic', 'Ritual', 'Breach', 'Delirium', 'Incursion', 'Abyss', 'Expedition'];
 
 /** Strip the {0} magnitude placeholder from a selector option label. */
 export function fmtChoiceLabel(label: string): string {
