@@ -16,7 +16,7 @@
 </script>
 
 <svelte:head>
-	<title>{planner.title || 'Shared Atlas plan'} — ExileCompass</title>
+	<title>{planner.title || 'Shared Atlas plan'} · ExileCompass</title>
 	<meta name="description" content="A shared Path of Exile 2 Atlas plan" />
 </svelte:head>
 
@@ -37,28 +37,26 @@
 		inset: 0;
 		display: flex;
 		flex-direction: column;
-		background: #000;
+		background: var(--bg);
 	}
 	.banner {
 		display: flex;
 		align-items: center;
 		gap: 12px;
 		padding: 6px 14px;
-		background: #0b1a0b;
-		border-bottom: 1px solid #1d2d1d;
-		color: #9be8a8;
-		font:
-			12px system-ui,
-			sans-serif;
+		background: var(--ok-soft);
+		border-bottom: 1px solid var(--ok-deep);
+		color: var(--ok-bright);
+		font: 12px var(--font-sans);
 	}
 	.banner .spacer {
 		flex: 1;
 	}
 	.banner .stale {
-		color: #e0c46a;
+		color: var(--warn);
 	}
 	.banner .edit {
-		color: #c9aa45;
+		color: var(--text);
 		text-decoration: none;
 		font-weight: 600;
 	}

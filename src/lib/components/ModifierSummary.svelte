@@ -97,25 +97,21 @@
 		z-index: 11;
 	}
 	.mods-pill {
-		background: rgba(15, 15, 15, 0.85);
-		border: 1px solid #2a2a2a;
-		border-radius: 4px;
-		color: #c4c7cf;
-		font:
-			12px system-ui,
-			sans-serif;
+		background: var(--glass);
+		border: 1px solid var(--edge);
+		border-radius: var(--radius-sm);
+		color: var(--text);
+		font: 12px var(--font-sans);
 		padding: 6px 10px;
 		cursor: pointer;
 	}
 	.mods-pill:hover {
-		border-color: #c9aa45;
-		color: #c9aa45;
+		border-color: var(--text);
+		color: var(--text);
 	}
 	.mods-count {
-		color: #f0c850;
-		font:
-			11px ui-monospace,
-			monospace;
+		color: var(--text);
+		font: 11px var(--font-mono);
 		margin-left: 6px;
 	}
 	.mods.open {
@@ -124,9 +120,9 @@
 		width: 420px;
 		max-width: 84vw;
 		max-height: min(62vh, 560px);
-		background: rgba(15, 15, 15, 0.92);
-		border: 1px solid #2a2a2a;
-		border-radius: 6px;
+		background: var(--glass);
+		border: 1px solid var(--edge);
+		border-radius: var(--radius);
 		padding: 8px 10px 10px;
 	}
 	.mods-head {
@@ -136,15 +132,13 @@
 	}
 	.mods-title {
 		flex: 1;
-		color: #8a8d97;
-		font:
-			600 11px system-ui,
-			sans-serif;
+		color: var(--muted);
+		font: 600 11px var(--font-sans);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 	}
 	.mods-at {
-		color: #f0c850;
+		color: var(--text);
 		text-transform: none;
 		letter-spacing: 0;
 		font-weight: 400;
@@ -153,20 +147,20 @@
 	.mods-collapse {
 		background: none;
 		border: none;
-		color: #8a8d97;
+		color: var(--muted);
 		font-size: 16px;
 		line-height: 1;
 		cursor: pointer;
 		padding: 0 4px;
 	}
 	.mods-collapse:hover {
-		color: #c9aa45;
+		color: var(--text);
 	}
 	.mods-list {
 		overflow-y: auto;
 		min-height: 0;
 		scrollbar-width: thin;
-		scrollbar-color: #2e2e2e transparent;
+		scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
 	}
 	.mods-list::-webkit-scrollbar {
 		width: 6px;
@@ -175,31 +169,27 @@
 		background: transparent;
 	}
 	.mods-list::-webkit-scrollbar-thumb {
-		background: #2e2e2e;
-		border-radius: 3px;
+		background: rgba(255, 255, 255, 0.18);
+		border-radius: var(--radius-sm);
 	}
 	.mods-list::-webkit-scrollbar-thumb:hover {
-		background: #c9aa45;
+		background: var(--text);
 	}
 	.mods-empty {
 		margin: 2px 0;
-		color: #8a8d97;
-		font:
-			italic 12px system-ui,
-			sans-serif;
+		color: var(--muted);
+		font: italic 12px var(--font-sans);
 	}
 	.totals {
 		margin-bottom: 10px;
 		padding: 6px 8px 7px;
-		background: rgba(201, 170, 69, 0.05);
-		border: 1px solid #32301f;
-		border-radius: 5px;
+		background: var(--panel-2);
+		border: 1px solid var(--edge);
+		border-radius: var(--radius);
 	}
 	.totals-head {
-		color: #c9aa45;
-		font:
-			600 12px system-ui,
-			sans-serif;
+		color: var(--text);
+		font: 600 12px var(--font-sans);
 		margin-bottom: 4px;
 	}
 	.trow {
@@ -207,25 +197,19 @@
 		align-items: baseline;
 		gap: 8px;
 		padding: 1px 0;
-		font:
-			12px/1.4 system-ui,
-			sans-serif;
+		font: 12px/1.4 var(--font-sans);
 	}
 	.tlabel {
 		flex: 1;
-		color: #d8dae0;
+		color: var(--muted);
 	}
 	.tval {
-		color: #f0c850;
-		font:
-			12px ui-monospace,
-			monospace;
+		color: var(--text);
+		font: 12px var(--font-mono);
 	}
 	.tsit {
-		color: #6b7280;
-		font:
-			11px ui-monospace,
-			monospace;
+		color: var(--faint);
+		font: 11px var(--font-mono);
 		cursor: help;
 	}
 	.grp + .grp {
@@ -237,11 +221,9 @@
 		gap: 7px;
 		padding-bottom: 4px;
 		margin-bottom: 4px;
-		border-bottom: 1px solid #232323;
-		color: var(--grp-color, #c9aa45);
-		font:
-			600 12px system-ui,
-			sans-serif;
+		border-bottom: 1px solid var(--edge);
+		color: var(--grp-color, var(--text));
+		font: 600 12px var(--font-sans);
 	}
 	.grp-icon {
 		width: 18px;
@@ -254,10 +236,8 @@
 		align-items: baseline;
 		gap: 8px;
 		padding: 2px 0;
-		color: #d8dae0;
-		font:
-			12px/1.4 system-ui,
-			sans-serif;
+		color: var(--text);
+		font: 12px/1.4 var(--font-sans);
 	}
 	.line .txt {
 		flex: 1;
@@ -265,13 +245,11 @@
 	}
 	.line .mult {
 		flex: none;
-		color: #f0c850;
-		font:
-			11px ui-monospace,
-			monospace;
-		background: #1f1b10;
-		border: 1px solid #3a3322;
-		border-radius: 3px;
+		color: var(--text);
+		font: 11px var(--font-mono);
+		background: var(--panel-2);
+		border: 1px solid var(--edge);
+		border-radius: var(--radius-sm);
 		padding: 0 4px;
 	}
 </style>

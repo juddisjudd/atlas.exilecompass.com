@@ -1,13 +1,66 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
-/* Tailwind v4 preflight resets interactive controls to the native (default)
-   cursor; restore a pointer on things that are clickable. */
+:root {
+	--bg: #000000;
+	--bg-2: #0a0a0a;
+	--panel: #0f0f0f;
+	--panel-2: #161616;
+	--glass: rgba(10, 10, 10, 0.88);
+	--edge: rgba(255, 255, 255, 0.1);
+	--edge-soft: rgba(255, 255, 255, 0.06);
+	--edge-strong: rgba(255, 255, 255, 0.16);
+
+	--gold: #e5484d;
+	--gold-bright: #ff6369;
+	--accent-soft: rgba(229, 72, 77, 0.12);
+
+	--text: #ededed;
+	--muted: #a1a1a1;
+	--faint: #6b6b6b;
+
+	--ok: #3ecf8e;
+	--ok-bright: #6ee7b7;
+	--ok-deep: #1b5e3f;
+	--ok-soft: rgba(62, 207, 142, 0.1);
+	--warn: #e5b84d;
+	--hl: #ffd966;
+
+	--font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+	--ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+	--radius-sm: 6px;
+	--radius: 8px;
+	--radius-lg: 12px;
+}
+
 @layer base {
+	html {
+		background: var(--bg);
+		color: var(--text);
+		font-family: var(--font-sans);
+		font-feature-settings: 'cv11', 'ss01', 'ss03', 'tnum';
+		-webkit-font-smoothing: antialiased;
+	}
+
+	/* Tailwind v4 preflight resets interactive controls to the native (default)
+	   cursor; restore a pointer on things that are clickable. */
 	button:not(:disabled),
 	select:not(:disabled),
 	summary,
 	[role='button'] {
 		cursor: pointer;
+	}
+
+	:focus-visible {
+		outline: none;
+		box-shadow:
+			0 0 0 2px var(--bg),
+			0 0 0 4px var(--edge-strong);
+	}
+
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
 	}
 }

@@ -74,7 +74,11 @@
 		<!-- one tick line per allocatable point, so the full scale is visible -->
 		<div class="ticks" style:--n={total}></div>
 		{#if planner.count < total}
-			<div class="planend" style:left="{pct(planner.count)}%" title="End of plan ({planner.count} points)"></div>
+			<div
+				class="planend"
+				style:left="{pct(planner.count)}%"
+				title="End of plan ({planner.count} points)"
+			></div>
 		{/if}
 		{#each planner.milestones as m, i (i)}
 			<div class="mstick" style:left="{pct(m.at)}%" title={m.label}></div>
@@ -112,13 +116,11 @@
 
 <style>
 	.timeline {
-		background: #0b0b0b;
-		border-top: 1px solid #1d1d1d;
+		background: var(--panel);
+		border-top: 1px solid var(--edge);
 		padding: 8px 14px 10px;
-		color: #d8dae0;
-		font:
-			12px/1.4 system-ui,
-			sans-serif;
+		color: var(--text);
+		font: 12px/1.4 var(--font-sans);
 	}
 	.bar {
 		display: flex;
@@ -127,38 +129,38 @@
 		margin-bottom: 8px;
 	}
 	.info b {
-		color: #f0c850;
+		color: var(--text);
 	}
 	.spacer {
 		flex: 1;
 	}
 	.bar button {
-		background: #161616;
-		border: 1px solid #2a2a2a;
-		color: #d8dae0;
-		border-radius: 4px;
+		background: var(--panel-2);
+		border: 1px solid var(--edge);
+		color: var(--text);
+		border-radius: var(--radius-sm);
 		padding: 3px 9px;
 		font-size: 12px;
 		cursor: pointer;
 	}
 	.bar button:hover {
-		border-color: #c9aa45;
-		color: #c9aa45;
+		border-color: var(--text);
+		color: var(--text);
 	}
 	.bar button.primary {
-		border-color: #3a5a3a;
-		color: #9be8a8;
+		border-color: var(--ok-deep);
+		color: var(--ok-bright);
 	}
 	.bar button.primary:hover {
-		border-color: #4ade80;
-		color: #4ade80;
+		border-color: var(--ok);
+		color: var(--ok);
 	}
 
 	.track {
 		position: relative;
 		height: 22px;
 		border-radius: 11px;
-		background: #1a1a1a;
+		background: var(--panel-2);
 		cursor: pointer;
 		touch-action: none;
 	}
@@ -168,7 +170,7 @@
 		left: 0;
 		top: 0;
 		bottom: 0;
-		background: #242424;
+		background: rgba(255, 255, 255, 0.08);
 		border-radius: 11px;
 		pointer-events: none;
 	}
@@ -177,7 +179,7 @@
 		left: 0;
 		top: 0;
 		bottom: 0;
-		background: linear-gradient(90deg, #2f6f47, #4ade80);
+		background: linear-gradient(90deg, var(--ok-deep), var(--ok));
 		border-radius: 11px;
 		pointer-events: none;
 	}
@@ -206,7 +208,7 @@
 		top: -2px;
 		bottom: -2px;
 		width: 2px;
-		background: #6b6f7a;
+		background: var(--faint);
 		transform: translateX(-1px);
 		pointer-events: none;
 	}
@@ -215,7 +217,7 @@
 		top: -3px;
 		bottom: -3px;
 		width: 2px;
-		background: #f0c850;
+		background: var(--text);
 		transform: translateX(-1px);
 		pointer-events: none;
 	}
@@ -225,8 +227,8 @@
 		width: 14px;
 		height: 14px;
 		border-radius: 50%;
-		background: #ffe089;
-		border: 2px solid #0b0b0b;
+		background: #ffffff;
+		border: 2px solid var(--panel);
 		transform: translate(-50%, -50%);
 		pointer-events: none;
 		box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
@@ -242,33 +244,31 @@
 		display: flex;
 		align-items: center;
 		gap: 4px;
-		background: #141414;
-		border: 1px solid #2a2a2a;
-		border-radius: 4px;
+		background: var(--panel-2);
+		border: 1px solid var(--edge);
+		border-radius: var(--radius-sm);
 		padding: 2px 4px 2px 6px;
 	}
 	.chip .jump {
 		background: none;
 		border: none;
-		color: #c9aa45;
-		font:
-			11px ui-monospace,
-			monospace;
+		color: var(--text);
+		font: 11px var(--font-mono);
 		cursor: pointer;
 		padding: 0 2px;
 	}
 	.chip .label {
-		background: #0d0d0d;
-		border: 1px solid #242424;
-		border-radius: 3px;
-		color: #d8dae0;
+		background: var(--bg);
+		border: 1px solid var(--edge-soft);
+		border-radius: var(--radius-sm);
+		color: var(--text);
 		font-size: 12px;
 		padding: 2px 6px;
 		width: 130px;
 	}
 	.chip .label:focus {
 		outline: none;
-		border-color: #c9aa45;
+		border-color: var(--edge-strong);
 	}
 	.chip .label.ro {
 		border-color: transparent;
@@ -278,20 +278,20 @@
 	.chip .del {
 		background: none;
 		border: none;
-		color: #8a8d97;
+		color: var(--muted);
 		cursor: pointer;
 		font-size: 14px;
 		line-height: 1;
 		padding: 0 4px;
 	}
 	.chip .del:hover {
-		color: #e06a6a;
+		color: var(--gold-bright);
 	}
 	/* empty-state placeholder: same vertical footprint as a chip row */
 	.mlist.empty {
 		align-items: center;
 		min-height: 26px;
-		color: #6f727b;
+		color: var(--faint);
 		font-size: 12px;
 		font-style: italic;
 	}

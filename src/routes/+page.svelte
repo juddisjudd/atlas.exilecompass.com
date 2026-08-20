@@ -18,7 +18,7 @@
 </script>
 
 <svelte:head>
-	<title>Atlas Planner — ExileCompass</title>
+	<title>Atlas Planner · ExileCompass</title>
 	<meta name="description" content="Path of Exile 2 Atlas skill tree planner" />
 </svelte:head>
 
@@ -33,7 +33,7 @@
 		inset: 0;
 		display: flex;
 		flex-direction: column;
-		background: #000;
+		background: var(--bg);
 	}
 	.tree-area {
 		flex: 1;
